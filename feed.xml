@@ -1,4 +1,292 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://vac.dev/feed.xml" rel="self" type="application/atom+xml" /><link href="https://vac.dev/" rel="alternate" type="text/html" /><updated>2022-04-19T08:52:08+00:00</updated><id>https://vac.dev/feed.xml</id><title type="html">Vac</title><subtitle>Vac is a modular peer-to-peer messaging stack, with a focus on secure messaging.</subtitle><entry><title type="html">Opinion: Pseudo-ethics in the Surveillance Tech Industry</title><link href="https://vac.dev/ethics-surveillance-tech" rel="alternate" type="text/html" title="Opinion: Pseudo-ethics in the Surveillance Tech Industry" /><published>2021-12-03T08:00:00+00:00</published><updated>2021-12-03T08:00:00+00:00</updated><id>https://vac.dev/ethics-surveillance-tech</id><content type="html" xml:base="https://vac.dev/ethics-surveillance-tech">&lt;p&gt;&lt;em&gt;This is an opinion piece by pseudonymous contributor, circe.&lt;/em&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://vac.dev/feed.xml" rel="self" type="application/atom+xml" /><link href="https://vac.dev/" rel="alternate" type="text/html" /><updated>2022-04-19T09:06:06+00:00</updated><id>https://vac.dev/feed.xml</id><title type="html">Vac</title><subtitle>Vac is a modular peer-to-peer messaging stack, with a focus on secure messaging.</subtitle><entry><title type="html">Introducing nwaku</title><link href="https://vac.dev/introducing-nwaku" rel="alternate" type="text/html" title="Introducing nwaku" /><published>2022-04-12T08:00:00+00:00</published><updated>2022-04-12T08:00:00+00:00</updated><id>https://vac.dev/introducing-nwaku</id><content type="html" xml:base="https://vac.dev/introducing-nwaku">&lt;h2 id=&quot;background&quot;&gt;Background&lt;/h2&gt;
+
+&lt;p&gt;If you’ve been following our &lt;a href=&quot;https://vac.dev/research-log/&quot;&gt;research log&lt;/a&gt;,
+you’ll know that many things have happened in the world of Waku v2 since &lt;a href=&quot;/waku-v2-ethereum-coscup&quot;&gt;our last general update&lt;/a&gt;.
+In line with our &lt;a href=&quot;https://vac.dev/#about&quot;&gt;long term goals&lt;/a&gt;,
+we’ve introduced new protocols,
+tweaked our existing protocols
+and expanded our team.
+We’ve also shown &lt;a href=&quot;/waku-v1-v2-bandwidth-comparison&quot;&gt;in a series of practical experiments&lt;/a&gt; that Waku v2 does indeed deliver on some of the &lt;a href=&quot;/waku-v2-plan&quot;&gt;theoretical advantages&lt;/a&gt; it was designed to have over its predecessor, Waku v1.
+A &lt;a href=&quot;https://forum.vac.dev/t/vac-sustainability-and-business-workshop/116&quot;&gt;sustainability and business workshop&lt;/a&gt; led to the formulation of a clearer vision for Vac as a team.&lt;/p&gt;
+
+&lt;p&gt;From the beginning, our protocol development has been complemented by various client implementations of these protocols,
+first in &lt;a href=&quot;https://github.com/status-im/nim-waku&quot;&gt;Nim&lt;/a&gt;,
+but later also in &lt;a href=&quot;https://github.com/status-im/js-waku&quot;&gt;JavaScript&lt;/a&gt;
+and &lt;a href=&quot;https://github.com/status-im/go-waku&quot;&gt;Go&lt;/a&gt;.
+A follow-up post will clarify the purposes, similarities and differences between these three clients.
+The &lt;a href=&quot;https://github.com/status-im/nim-waku/tree/d2fccb5220144893f994a67f2cc26661247f101f/waku/v2&quot;&gt;Nim client&lt;/a&gt;, is our reference implementation,
+developed by the research team in parallel with the specs
+and building on a home-grown implementation of &lt;a href=&quot;https://github.com/status-im/nim-libp2p&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;libp2p&lt;/code&gt;&lt;/a&gt;.
+The Nim client is suitable to run as &lt;a href=&quot;/waku-update&quot;&gt;a standalone adaptive node&lt;/a&gt;,
+managed by individual operators
+or as an encapsulated service node in other applications.
+This post looks at some recent developments within the Nim client.&lt;/p&gt;
+
+&lt;h2 id=&quot;1-nim-waku-is-now-known-as-nwaku&quot;&gt;1. &lt;em&gt;&lt;strong&gt;nim-waku&lt;/strong&gt;&lt;/em&gt; is now known as &lt;em&gt;&lt;strong&gt;nwaku&lt;/strong&gt;&lt;/em&gt;&lt;/h2&gt;
+
+&lt;p&gt;Pronounced NWHA-koo.
+You may already have seen us refer to “&lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt;” on Vac communication channels,
+but it is now official:
+The &lt;code class=&quot;highlighter-rouge&quot;&gt;nim-waku&lt;/code&gt; Waku v2 client has been named &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt;.
+Why? Well, we needed a recognizable name for our client that could easily be referred to in everyday conversations
+and &lt;code class=&quot;highlighter-rouge&quot;&gt;nim-waku&lt;/code&gt; just didn’t roll off the tongue.
+We’ve followed the example of the closely related &lt;a href=&quot;https://github.com/status-im/nimbus-eth2&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;nimbus&lt;/code&gt; project&lt;/a&gt; to find a punchier name
+that explicitly links the client to both the Waku set of protocols and the Nim language.&lt;/p&gt;
+
+&lt;h2 id=&quot;2-improvements-in-stability-and-performance&quot;&gt;2. Improvements in stability and performance&lt;/h2&gt;
+
+&lt;p&gt;The initial implementation of Waku v2 demonstrated how the suite of protocols can be applied
+to form a generalized, peer-to-peer messaging network,
+while addressing a wide range of adaptive requirements.
+This allowed us to lift several protocol &lt;a href=&quot;https://rfc.vac.dev/&quot;&gt;specifications&lt;/a&gt; from &lt;code class=&quot;highlighter-rouge&quot;&gt;raw&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;draft&lt;/code&gt; status,
+indicating that a reference implementation exists for each.
+However, as internal dogfooding increased and more external applications started using &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt;,
+we stepped up our focus on the client’s stability and performance.
+This is especially true where we want &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; to run unsupervised in a production environment
+without any degradation in the services it provides.&lt;/p&gt;
+
+&lt;p&gt;Some of the more significant productionization efforts over the last couple of months included:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Reworking the &lt;code class=&quot;highlighter-rouge&quot;&gt;store&lt;/code&gt; implementation to maintain stable memory usage
+while storing historical messages
+and serving multiple clients querying history simultaneously.
+Previously, a &lt;code class=&quot;highlighter-rouge&quot;&gt;store&lt;/code&gt; node would see gradual service degradation
+due to inefficient memory usage when responding to history queries.
+Queries that often took longer than 8 mins now complete in under 100 ms.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Improved peer management.
+For example, &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; nodes will now remove unreachable clients after a number of connection failures,
+whereas they would previously keep accumulating dead peers.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Improved disk usage.
+&lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; nodes that persist historical messages on disk now manage their own storage size based on the &lt;code class=&quot;highlighter-rouge&quot;&gt;--store-capacity&lt;/code&gt;.
+This can significantly improve node start-up times.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;More stability issues may be addressed in future as &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; matures,
+but we’ve noticed a marked improvement in the reliability of running &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; nodes.
+These include environments where &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; nodes are expected to run with a long uptime.
+Vac currently operates two long-running fleets of &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; nodes, &lt;code class=&quot;highlighter-rouge&quot;&gt;wakuv2.prod&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;wakuv2.test&lt;/code&gt;,
+for internal dogfooding and
+to serve as experimental bootstrapping nodes.
+Status has also recently deployed similar fleets for production and testing based on &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt;.
+Our goal is to have &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; be stable, performant and flexible enough
+to be an attractive option for operators to run and maintain their own Waku v2 nodes.
+See also the &lt;a href=&quot;#future-work&quot;&gt;future work&lt;/a&gt; section below for more on our general goal of &lt;em&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; for operators&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;3-improvements-in-interoperability&quot;&gt;3. Improvements in interoperability&lt;/h2&gt;
+
+&lt;p&gt;We’ve implemented several features that improve &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt;’s usability in different environments
+and its interoperability with other Waku v2 clients.
+One major step forward here was adding support for both secure and unsecured WebSocket connections as &lt;code class=&quot;highlighter-rouge&quot;&gt;libp2p&lt;/code&gt; transports.
+This allows direct connectivity with &lt;code class=&quot;highlighter-rouge&quot;&gt;js-waku&lt;/code&gt;
+and paves the way for native browser usage.
+We’ve also added support for parsing and resolving DNS-type &lt;code class=&quot;highlighter-rouge&quot;&gt;multiaddrs&lt;/code&gt;,
+i.e. multiaddress protocol schemes &lt;a href=&quot;https://github.com/multiformats/multiaddr/blob/b746a7d014e825221cc3aea6e57a92d78419990f/protocols.csv#L8-L11&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;dns&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;dns4&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;dns6&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;dnsaddr&lt;/code&gt;&lt;/a&gt;.
+A &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; node can now also be &lt;a href=&quot;https://github.com/status-im/nim-waku/tree/d2fccb5220144893f994a67f2cc26661247f101f/waku/v2#configuring-a-domain-name&quot;&gt;configured with its own IPv4 DNS domain name&lt;/a&gt; 
+allowing dynamic IP address allocation without impacting a node’s reachability by its peers.&lt;/p&gt;
+
+&lt;h2 id=&quot;4-peer-discovery&quot;&gt;4. Peer discovery&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Peer discovery&lt;/em&gt; is the method by which nodes become aware of each other’s existence.
+The question of peer discovery in a Waku v2 network has been a focus area since the protocol was first conceptualized.
+Since then several different approaches to discovery have been proposed and investigated.
+We’ve implemented three discovery mechanisms in &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; so far:&lt;/p&gt;
+
+&lt;h3 id=&quot;dns-based-discovery&quot;&gt;DNS-based discovery&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; nodes can retrieve an authenticated, updateable list of peers via DNS to bootstrap connection to a Waku v2 network.
+Our implementation is based on &lt;a href=&quot;https://eips.ethereum.org/EIPS/eip-1459&quot;&gt;EIP-1459&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;gossipsub-peer-exchange&quot;&gt;GossipSub peer exchange&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/gossipsub-v1.1.md#prune-backoff-and-peer-exchange&quot;&gt;GossipSub Peer Exchange (PX)&lt;/a&gt; is a GossipSub v1.1 mechanism
+whereby a pruning peer may provide a pruned peer with a set of alternative peers
+where it can connect to reform its mesh.
+This is a very suitable mechanism to gradually discover more peers
+from an initial connection to a small set of bootstrap peers.
+It is enabled in a &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; node by default.&lt;/p&gt;
+
+&lt;h3 id=&quot;waku-node-discovery-protocol-v5&quot;&gt;Waku Node Discovery Protocol v5&lt;/h3&gt;
+
+&lt;p&gt;This is a DHT-based discovery mechanism adapted to store and relay &lt;em&gt;node records&lt;/em&gt;.
+Our implementation is based on &lt;a href=&quot;https://github.com/ethereum/devp2p/blob/fa6428ada7385c13551873b2ae6ad2457c228eb8/discv5/discv5-theory.md&quot;&gt;Ethereum’s Discovery v5 protocol&lt;/a&gt;
+with some &lt;a href=&quot;https://rfc.vac.dev/spec/33/&quot;&gt;minor modifications&lt;/a&gt; to isolate our discovery network from that of Ethereum.
+The decision to separate the Waku Discovery v5 network from Ethereum’s was made on considerations of lookup efficiency.
+This comes at a possible tradeoff in network resilience.
+We are considering merging with the Ethereum Discovery v5 network in future,
+or even implement a hybrid solution.
+&lt;a href=&quot;https://forum.vac.dev/t/waku-v2-discv5-roadmap-discussion/121/8&quot;&gt;This post&lt;/a&gt; explains the decision and future steps.&lt;/p&gt;
+
+&lt;h2 id=&quot;5-spam-protection-using-rln&quot;&gt;5. Spam protection using RLN&lt;/h2&gt;
+
+&lt;p&gt;An early addition to our suite of protocols was &lt;a href=&quot;https://rfc.vac.dev/spec/32/&quot;&gt;an extension of &lt;code class=&quot;highlighter-rouge&quot;&gt;11/WAKU-RELAY&lt;/code&gt;&lt;/a&gt;
+that provided spam protection using &lt;a href=&quot;https://rfc.vac.dev/spec/32/&quot;&gt;Rate Limiting Nullifiers (RLN)&lt;/a&gt;.
+The &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; client now contains a working demonstration and integration of RLN relay.
+Check out &lt;a href=&quot;https://github.com/status-im/nim-waku/blob/ee96705c7fbe4063b780ac43b7edee2f6c4e351b/docs/tutorial/rln-chat2-live-testnet.md&quot;&gt;this tutorial&lt;/a&gt; to see the protocol in action using a toy chat application built on &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt;.
+We’d love for people to join us in dogfooding RLN spam protection as part of our operator incentive testnet.
+Feel free to join our &lt;a href=&quot;https://discord.gg/KNj3ctuZvZ&quot;&gt;Vac Discord&lt;/a&gt; server
+and head to the &lt;code class=&quot;highlighter-rouge&quot;&gt;#rln&lt;/code&gt; channel for more information.&lt;/p&gt;
+
+&lt;h2 id=&quot;future-work&quot;&gt;Future work&lt;/h2&gt;
+
+&lt;p&gt;As we continue working towards our goal of a fully decentralized, generalized and censorship-resistant messaging protocol,
+these are some of the current and future focus areas for &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt;:&lt;/p&gt;
+
+&lt;h3 id=&quot;reaching-out-to-operators&quot;&gt;Reaching out to operators:&lt;/h3&gt;
+
+&lt;p&gt;We are starting to push for operators to run and maintain their own Waku v2 nodes,
+preferably contributing to the default Waku v2 network as described by the default pubsub topic (&lt;code class=&quot;highlighter-rouge&quot;&gt;/waku/2/default-waku/proto&lt;/code&gt;).
+Amongst other things, a large fleet of stable operator-run Waku v2 nodes will help secure the network,
+provide valuable services to a variety of applications
+and ensure the future sustainability of both Vac as a research organization and the Waku suite of protocols.&lt;/p&gt;
+
+&lt;p&gt;We are targeting &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; as the main option for operator-run nodes.&lt;br /&gt;
+Specifically, we aim to provide through &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;a lightweight and robust Waku v2 client.
+This client must be first in line to support innovative and new Waku v2 protocols,
+but configurable enough to serve the adaptive needs of various operators.&lt;/li&gt;
+  &lt;li&gt;an easy-to-follow guide for operators to configure,
+set up and maintain their own nodes&lt;/li&gt;
+  &lt;li&gt;a set of operator-focused tools to monitor and maintain a running node&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;better-conversational-security-layer-guarantees&quot;&gt;Better conversational security layer guarantees&lt;/h3&gt;
+
+&lt;p&gt;Conversational security guarantees in Waku v2 are currently designed around the Status application.
+Developers building their own applications on top of Waku would therefore
+either have to reimplement a set of tools similar to Status
+or build their own security solutions on the application layer above Waku.
+We are working on &lt;a href=&quot;https://github.com/vacp2p/research/issues/97&quot;&gt;a set of features&lt;/a&gt; built into Waku
+that will provide the general security properties Waku users may desire
+and do so in a modern and simple way.
+This is useful for applications outside of Status that want similar security guarantees.
+As a first step, we’ve already made good progress toward &lt;a href=&quot;https://forum.vac.dev/t/noise-handshakes-as-key-exchange-mechanism-for-waku2/130&quot;&gt;integrating noise handshakes&lt;/a&gt; as a key exchange mechanism in Waku v2.&lt;/p&gt;
+
+&lt;h3 id=&quot;protocol-incentivization&quot;&gt;Protocol incentivization&lt;/h3&gt;
+
+&lt;p&gt;We want to design incentivization around our protocols to encourage desired behaviors in the Waku network,
+rewarding nodes providing costly services
+and punishing adversarial actions.
+This will increase the overall security of the network
+and encourage operators to run their own Waku nodes.
+In turn, the sustainability of Vac as an organization will be better guaranteed.
+As such, protocol incentivization was a major focus in our recent &lt;a href=&quot;https://forum.vac.dev/t/vac-sustainability-and-business-workshop/&quot;&gt;Vac Sustainability and Business Workshop&lt;/a&gt;.
+Our first step here is to finish integrating RLN relay into Waku
+with blockchain interaction to manage members,
+punish spammers
+and reward spam detectors.
+After this, we want to design monetary incentivization for providers of &lt;code class=&quot;highlighter-rouge&quot;&gt;store&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;lightpush&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; services.
+This may also tie into a reputation mechanism for service nodes based on a network-wide consensus on service quality.
+A big challenge for protocol incentivization is doing it in a private fashion,
+so we can keep similar metadata protection guarantees as the Waku base layer.
+This ties into our focus on &lt;a href=&quot;https://forum.vac.dev/t/vac-3-zk/97&quot;&gt;Zero Knowledge tech&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;improved-store-capacity&quot;&gt;Improved store capacity&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; store currently serves as an efficient in-memory store for historical messages,
+dimensioned by the maximum number of messages the store node is willing to keep.
+This makes the &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; store appropriate for keeping history over a short term
+without any time-based guarantees,
+but with the advantage of providing fast responses to history queries.
+Some applications, such as Status, require longer-term historical message storage
+with time-based dimensioning
+to guarantee that messages will be stored for a specified minimum period.
+Because of the relatively high cost of memory compared to disk space,
+a higher capacity store, with time guarantees, should operate as a disk-only database of historical messages.
+This is an ongoing effort.&lt;/p&gt;
+
+&lt;h3 id=&quot;multipurpose-discovery&quot;&gt;Multipurpose discovery&lt;/h3&gt;
+
+&lt;p&gt;In addition to &lt;a href=&quot;#4-peer-discovery&quot;&gt;the three discovery methods&lt;/a&gt; already implemented in &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt;,
+we are working on improving discovery on at least three fronts:&lt;/p&gt;
+
+&lt;h4 id=&quot;capability-discovery&quot;&gt;&lt;em&gt;Capability discovery:&lt;/em&gt;&lt;/h4&gt;
+
+&lt;p&gt;Waku v2 nodes may be interested in peers with specific capabilities, for example:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;peers within a specific pubsub topic mesh,&lt;/li&gt;
+  &lt;li&gt;peers with &lt;strong&gt;store&lt;/strong&gt; capability,&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;store&lt;/strong&gt; peers with x days of history for a specific content topic, etc.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Capability discovery entails mechanisms by which such capabilities can be advertised and discovered/negotiated.
+One major hurdle to overcome is the increased complexity of finding a node with specific capabilities within the larger network (a needle in a haystack).
+See the &lt;a href=&quot;https://github.com/vacp2p/rfc/issues/429&quot;&gt;original problem statement&lt;/a&gt; for more.&lt;/p&gt;
+
+&lt;h4 id=&quot;improvements-in-discovery-v5&quot;&gt;&lt;em&gt;Improvements in Discovery v5&lt;/em&gt;&lt;/h4&gt;
+
+&lt;p&gt;Of the implemented discovery methods,
+Discovery v5 best addresses our need for a decentralized and scalable discovery mechanism.
+With the basic implementation done,
+there are some improvements planned for Discovery v5,
+including methods to increase security such as merging with the Ethereum Discovery v5 network,
+introducing explicit NAT traversal
+and utilizing &lt;a href=&quot;https://github.com/ethereum/devp2p/blob/fa6428ada7385c13551873b2ae6ad2457c228eb8/discv5/discv5-theory.md#topic-advertisement&quot;&gt;topic advertisement&lt;/a&gt;.
+The &lt;a href=&quot;https://forum.vac.dev/t/waku-v2-discv5-roadmap-discussion/121&quot;&gt;Waku v2 Discovery v5 Roadmap&lt;/a&gt; contains more details.&lt;/p&gt;
+
+&lt;h4 id=&quot;generalized-peer-exchange&quot;&gt;&lt;em&gt;Generalized peer exchange&lt;/em&gt;&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; already implements &lt;a href=&quot;https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/gossipsub-v1.1.md#prune-backoff-and-peer-exchange&quot;&gt;GossipSub peer exchange&lt;/a&gt;.
+We now need a general request-response mechanism outside of GossipSub
+by which a node may learn about other Waku v2 nodes
+by requesting and receiving a list of peers from a neighbor.
+This could, for example, be a suitable way for resource-restricted devices to request a stronger peer
+to perform a random Discovery v5 lookup on their behalf
+or simply to be informed of a subset of the peers known to that neighbor.
+See &lt;a href=&quot;https://github.com/vacp2p/rfc/issues/495&quot;&gt;this issue&lt;/a&gt; for more.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;This concludes a general outline of some of the main recent developments in the &lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; client
+and a summary of the current and future focus areas.
+Much more is happening behind the scenes, of course,
+so for more information, or to join the conversation,
+feel free to join our &lt;a href=&quot;https://discord.gg/KNj3ctuZvZ&quot;&gt;Vac Discord&lt;/a&gt; server
+or to check out the &lt;a href=&quot;https://github.com/status-im/nim-waku&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;nwaku&lt;/code&gt; repo on Github&lt;/a&gt;.
+You can also view the changelog for past releases &lt;a href=&quot;https://github.com/status-im/nim-waku/releases&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://rfc.vac.dev/spec/17/&quot;&gt;17/WAKU-RLN-RELAY&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://rfc.vac.dev/spec/32/&quot;&gt;32/RLN&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://rfc.vac.dev/spec/33/&quot;&gt;33/WAKU2-DISCV5&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/vacp2p/rfc/issues/429&quot;&gt;Capabilities advertising&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/status-im/nim-waku/tree/d2fccb5220144893f994a67f2cc26661247f101f/waku/v2#configuring-a-domain-name&quot;&gt;Configuring a domain name&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/vacp2p/research/issues/97&quot;&gt;Conversational security&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ethereum/devp2p/blob/fa6428ada7385c13551873b2ae6ad2457c228eb8/discv5/discv5-theory.md#topic-advertisement&quot;&gt;Discovery v5 Topic Advertisement&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://eips.ethereum.org/EIPS/eip-1459&quot;&gt;EIP-1459&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/gossipsub-v1.1.md#prune-backoff-and-peer-exchange&quot;&gt;GossipSub Peer Exchange&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/status-im/go-waku&quot;&gt;go-waku&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/status-im/js-waku&quot;&gt;js-waku&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/multiformats/multiaddr/blob/b746a7d014e825221cc3aea6e57a92d78419990f/protocols.csv#L8-L11&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;multiaddr&lt;/code&gt; formats&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/status-im/nimbus-eth2&quot;&gt;nimbus-eth2&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/status-im/nim-libp2p&quot;&gt;nim-libp2p&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/status-im/nim-waku&quot;&gt;nim-waku&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/status-im/nim-waku/releases&quot;&gt;nim-waku releases&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ethereum/devp2p/blob/fa6428ada7385c13551873b2ae6ad2457c228eb8/discv5/discv5-theory.md&quot;&gt;Node Discovery Protocol v5 - Theory&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://forum.vac.dev/t/noise-handshakes-as-key-exchange-mechanism-for-waku2/130&quot;&gt;Noise handshakes&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/status-im/nim-waku/blob/ee96705c7fbe4063b780ac43b7edee2f6c4e351b/docs/tutorial/rln-chat2-live-testnet.md&quot;&gt;RLN tutorial&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://forum.vac.dev/t/vac-3-zk/97&quot;&gt;Vac &amp;lt;3 ZK&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://vac.dev/#about&quot;&gt;Vac About page&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://vac.dev/research-log/&quot;&gt;Vac Research log&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://rfc.vac.dev/&quot;&gt;Vac RFC site&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://forum.vac.dev/t/vac-sustainability-and-business-workshop/&quot;&gt;Vac Sustainability and Business Workshop&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;/waku-update&quot;&gt;Waku Update&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;/waku-v1-v2-bandwidth-comparison&quot;&gt;Waku v1 vs Waku v2: Bandwidth Comparison&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/vacp2p/rfc/issues/495&quot;&gt;Waku v2 Peer Exchange&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://forum.vac.dev/t/waku-v2-discv5-roadmap-discussion/121&quot;&gt;Waku v2 Discovery v5 Roadmap&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;/waku-v2-plan&quot;&gt;What’s the Plan for Waku v2?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>hanno</name></author><category term="research" /><summary type="html">Background</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://vac.dev/assets/img/vac.png" /><media:content medium="image" url="https://vac.dev/assets/img/vac.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Opinion: Pseudo-ethics in the Surveillance Tech Industry</title><link href="https://vac.dev/ethics-surveillance-tech" rel="alternate" type="text/html" title="Opinion: Pseudo-ethics in the Surveillance Tech Industry" /><published>2021-12-03T08:00:00+00:00</published><updated>2021-12-03T08:00:00+00:00</updated><id>https://vac.dev/ethics-surveillance-tech</id><content type="html" xml:base="https://vac.dev/ethics-surveillance-tech">&lt;p&gt;&lt;em&gt;This is an opinion piece by pseudonymous contributor, circe.&lt;/em&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;preface&quot;&gt;Preface&lt;/h2&gt;
 
@@ -1701,271 +1989,4 @@ the primary bottleneck for full nodes, and the bottleneck is still bandwidth. To
   &lt;li&gt;Dmitry Shmatko&lt;/li&gt;
   &lt;li&gt;Kim De Mey&lt;/li&gt;
   &lt;li&gt;Corey Petty&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>dean</name></author><category term="research" /><summary type="html">Disclaimer: some of the numbers found in this write-up could be inaccurate. They are based on the current understanding of theoretical parts of the protocol itself by the author and are meant to provide a rough overview rather than bindable numbers.</summary></entry><entry><title type="html">What Would a WeChat Replacement Need?</title><link href="https://vac.dev/wechat-replacement-need" rel="alternate" type="text/html" title="What Would a WeChat Replacement Need?" /><published>2020-04-16T04:00:00+00:00</published><updated>2020-04-16T04:00:00+00:00</updated><id>https://vac.dev/wechat-replacement-need</id><content type="html" xml:base="https://vac.dev/wechat-replacement-need">&lt;p&gt;What would it take to replace WeChat? More specifically, what would a self-sovereign, private, censorship-resistant and open alternative look like? One that allows people to communicate, coordinate and transact freely.&lt;/p&gt;
-
-&lt;h2 id=&quot;background&quot;&gt;Background&lt;/h2&gt;
-
-&lt;h3 id=&quot;what-wechat-provides-to-the-end-user&quot;&gt;What WeChat provides to the end-user&lt;/h3&gt;
-
-&lt;p&gt;Let’s first look at some of the things that WeChat providers. It is a lot:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Messaging:&lt;/strong&gt; 1:1 and group chat. Text, as well as voice and video. Post gifs. Share location.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Group chat:&lt;/strong&gt; Limited to 500 people; above 100 people people need to verify with a bank account. Also has group video chat and QR code to join a group.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Timeline/Moments:&lt;/strong&gt; Post comments with attachments and have people like/comment on it.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Location Discovery:&lt;/strong&gt; See WeChat users that are nearby.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Profile:&lt;/strong&gt; Nickname and profile picture; can alias people.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;“Broadcast” messages:&lt;/strong&gt; Send one message to many contacts, up to 200 people (spam limited).&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Contacts:&lt;/strong&gt; Max 5000 contacts (people get around it with multiple accounts and sim cards).&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;App reach:&lt;/strong&gt; Many diferent web apps, extensions, native apps, etc. Scan QR code to access web app from phone.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Selective posting:&lt;/strong&gt; Decide who can view your posts and who can view your comments on other people’s post.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Transact:&lt;/strong&gt; Send money gifts through red envelopes.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Transact:&lt;/strong&gt; Use WeChat pay to transfer money to friends and businesses; linked account with Alipay that is connected to your bank account.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Services:&lt;/strong&gt; Find taxis and get notifications; book flights, train tickets, hotels etc.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Mini apps:&lt;/strong&gt; API for all kinds of apps that allow you to provide services etc.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Picture in picture:&lt;/strong&gt; allowing you to have a video call while using the app.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;And much more. Not going to through it all in detail, and there are probably many things I don’t know about WeChat since I’m not a heavy user living in mainland China.&lt;/p&gt;
-
-&lt;h3 id=&quot;how-wechat-works---a-toy-model&quot;&gt;How WeChat works - a toy model&lt;/h3&gt;
-
-&lt;p&gt;This is an overly simplistic model of how WeChat works, but it is sufficient for our purposes. This general design applies to most traditional client-server apps today.&lt;/p&gt;
-
-&lt;p&gt;To sign up for account you need a phone number or equivalent. To get access to some features you need to verify your identity further, for example with official ID and/or bank account.&lt;/p&gt;
-
-&lt;p&gt;When you signup this creates an entry in the WeChat server, from now on treated as a black box. You authenticate with that box, and thats where you get your messages from. If you go online the app asks that box for messages you have received while you were offline. If you login from a different app your contacts and conversations are synced from that box.&lt;/p&gt;
-
-&lt;p&gt;The box gives you an account, it deals with routing to your contacts, it stores messages and attachments and gives access to mini apps that people have uploaded. For transacting money, there is a partnership with a different company that has a different box which talks to your bank account.&lt;/p&gt;
-
-&lt;p&gt;This is done in a such a way that they can support a billion users with the features above, no sweat.&lt;/p&gt;
-
-&lt;p&gt;Whoever controls that box can sees who you are talking with and what the content of those messages are. There is no end to end encryption. If WeChat/Tencent disagrees with you for some reason they can ban you. This means you can’t interact with the box under that name anymore.&lt;/p&gt;
-
-&lt;h2 id=&quot;what-do-we-want&quot;&gt;What do we want?&lt;/h2&gt;
-
-&lt;p&gt;We want something that is self-sovereign, private, censorship-resistant and open that allows individuals and groups of people to communicate and transact freely. To explore what this means in more detail, without getting lost in the weeds, we provide the following list of properties. A lot of these are tied together, and some fall out of the other requirements. Some of them stand in slight opposition to each other.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Self-sovereignity identity&lt;/strong&gt;. Exercises authority within your own sphere. If you aren’t harming anyone, you should be able to have an account and communicate with other people.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Pseudonymity, and ideally total anonymity&lt;/strong&gt;. Not having your identity tied to your real name (e.g. through phone number, bank account, ID, etc). This allows people to act more freely without being overly worried about censorship and coercion in the real world. While total anonymity is even more desirable - especially to break multiple hops to a true-name action - real-world constraints sometimes makes this more challenging.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Private and secure communication&lt;/strong&gt;. Your communication and who you transact with should be for your eyes only. This includes transactions (transfer of value) as a form of communication.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Censorship-resistance&lt;/strong&gt;. Not being able to easily censor individuals on the platform. Both at an individual, group and collective level. Not having single points of failure that allow service to be disrupted.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Decentralization&lt;/strong&gt;. Partly falls out of censorship-resistance and other properties. If infrastructure isn’t decentralized it means there’s a single point of failure that can be disrupted. This is more of a tool than a goal on its own, but it is an important tool.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Built for mass adoption&lt;/strong&gt;. Includes scalabiltiy, UX (latency, reliability, bandwidth consumption, UI etc), and allowing for people to stick around. One way of doing this is to allow users to discover people they want to talk to.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Scalability&lt;/strong&gt;. Infrastructure needs to support a lot of users to be a viabile alternative. Like, a billion of them (eventually).&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Fundamentals in place to support great user experience&lt;/strong&gt;. To be a viable alternative, aside from good UI and distribution, fundamentals such as latency, bandwidth usage, consistency etc must support great UX to be a viable alternative.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Works for resource restricted devices, including smartphones&lt;/strong&gt;. Most people will use a smartphone to use this. This means it has to work well on them and similar devices, without becoming a second-class citizen where we ignore properties such as censorship-resistance and privacy. Some concession to reality will be necessary due to additional constraints, which leads us to…&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Adaptive nodes&lt;/strong&gt;. Nodes will have different capabilities, and perhaps at different times. To maintain a lot of the properties described here it is desirable if as many participants as possible are first-class citizens. If a phone is switching from a limited data plan to a WiFi network or from battery to AC power it can do more useful work, and so on. Likewise for a laptop with a lot of free disk space and spare compute power, etc.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Sustainable&lt;/strong&gt;. If there’s no centralized, top down ad-driven model, this means all the infrastructure has to be sustainable somehow. Since these are individual entitites, this means it has to be paid for. While altruistic modes and similar can be used, this likely requires some form of incentivization scheme for useful services provided in the network. Related: free rider problem.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Spam resistant&lt;/strong&gt;. Relates to sustainability, scalability and built for mass adoption. Made more difficult by pseudonymous identity due to whitewashing attacks.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Trust-minimized&lt;/strong&gt;. To know that properties are provided for and aren’t compromised, various ways of minimizing trust requirements are useful. This also related to mass adoption and social cohesion. Examples include: open and audited protocols, open source, reproducible builds, etc. This also relates to how mini apps are provided for, since we may not know their source but want to be able to use them anyway.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Open source&lt;/strong&gt;. Related to above, where we must be able to inspect the software to know that it functions as advertised and hasn’t been compromised, e.g. by uploading private data to a third party.&lt;/p&gt;
-
-&lt;p&gt;Some of these are graded and a bit subtle, i.e.:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Censorship resistance would ideally be able to absorb Internet shutdowns. This would require an extensive MANET/meshnet infrastructure, which while desirable, requires a lot of challenges to be overcome to be feasible.&lt;/li&gt;
-  &lt;li&gt;Privacy would ideally make all actions (optionally) totally anoymous, though this may incur undue costs on bandwidth and latency, which impacts user experience.&lt;/li&gt;
-  &lt;li&gt;Decentralization, certain topologies, such as DHTs, are efficient and quite decentralized but still have some centralized aspects, which makes it attackable in various ways. Ditto for blockchains compared with bearer instruments which requires some coordinating infrastructure, compared with naturally occuring assets such as precious metals.&lt;/li&gt;
-  &lt;li&gt;“Discover people” and striving for “total anonymity” might initially seem incompatible. The idea is to provide for sane defaults, and then allow people to decide how much information they want to disclose. This is the essence of privacy.&lt;/li&gt;
-  &lt;li&gt;Users often want &lt;em&gt;some&lt;/em&gt; form of moderation to get a good user experience, which can be seen as a form of censorship. The idea to raise the bar on the basics, the fundamental infrastructure. If individuals or specific communities want certain moderation mechanisms, that is still a compatible requirement.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;counterpoint-1&quot;&gt;Counterpoint 1&lt;/h3&gt;
-
-&lt;p&gt;We could refute the above by saying that the design goals are undesirable. We want a system where people can censor others, and where everyone is tied to their real identity. Or we could say something like, freedom of speech is a general concept, and it doesn’t apply to Internet companies, even if they provide a vital service. You can survive without it and you should’ve read the terms of service. This roughly charactericizes the mainstream view.&lt;/p&gt;
-
-&lt;p&gt;Additional factor here is the idea that a group of people know more about what’s good for you then you do, so they are protecting you.&lt;/p&gt;
-
-&lt;h3 id=&quot;counterpoint-2&quot;&gt;Counterpoint 2&lt;/h3&gt;
-
-&lt;p&gt;We could agree with all these design goals, but think they are too extreme in terms of their requirements. For example, we could operate as a non profit, take donations and volunteers, and then host the whole infrastructure ourselves. We could say we are in a friendly legislation, so we won’t be a single point of failure. Since we are working on this and maybe even our designs are open, you can trust us and we’ll provide service and infrastructure that gives you what you want without having to pay for it or solve all these complex decentralized computation and so on problems. If you don’t trust us for some reason, you shouldn’t use us regardless. Also, this is better than status quo. And we are more likely to survive by doing this, either by taking shortcuts or by being less ambituous in terms of scope.&lt;/p&gt;
-
-&lt;h2 id=&quot;principal-components&quot;&gt;Principal components&lt;/h2&gt;
-
-&lt;p&gt;There are many ways to skin a cat, but this is one way of breaking down the problem. We have a general direction with the properties listed above, together with some understanding of how WeChat works for the everday user. Now the question is, what infrastructure do we need to support this? How do we achieve the above properties, or at least get closer to them? We want to figure out the necessary building blocks, and one of doing this is to map out likely necessary components.&lt;/p&gt;
-
-&lt;h3 id=&quot;background-ethereum-and-web3-stack&quot;&gt;Background: Ethereum and Web3 stack&lt;/h3&gt;
-
-&lt;p&gt;It is worth noting that a lot of the required infrastructure has been developed, at least as concepts, in the original Ethereum / Web3 vision. In it there is Ethereum for consensus/compute/transact, storage through Swarm, and communication through Whisper. That said, the main focus has been on the Ethereum blockchain itself, and a lot of things have happened in the last 5y+ with respect to technology around privacy and scalabilty. It is worth revisiting things from a fresh point of view, with the WeChat alternative in mind as a clear use case.&lt;/p&gt;
-
-&lt;h3 id=&quot;account---self-sovereign-identity-and-the-perils-of-phone-numbers&quot;&gt;Account - self-sovereign identity and the perils of phone numbers&lt;/h3&gt;
-
-&lt;p&gt;Starting from the most basic: what is an account and how do you get one? With most internet services today, WeChat and almost all popular messaging apps included, you need to signup with some centralized authority. Usually you also have to verify this with some data that ties this account to you as an individual. E.g. by requiring a phone number, which in most jurisdictions &lt;sup id=&quot;fnref:1&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; means giving out your real ID. This also means you can be banned from using the service by a somewhat arbitrary process, with no due process.&lt;/p&gt;
-
-&lt;p&gt;Now, we could argue these app providers can do what they want. And they are right, in a very narrow sense. As apps like WeChat (and Google) become general-purpose platforms, they become more and more ingrained in our everyday lives. They start to provide utilities that we absolutely require to work to go about our day, such as paying for food or transportation. This means we need higher standard than this.&lt;/p&gt;
-
-&lt;p&gt;Justifications for requiring phone numbers are usually centered around three claims:
-1) Avoiding spam
-2) Tying your account to your real name, for various reasons
-3) Using as a commonly shared identifier as a social network discovery mechanism&lt;/p&gt;
-
-&lt;p&gt;Of course, many services require more than phone numbers. E.g. email, other forms of personal data such as voice recording, linking a bank account, and so on.&lt;/p&gt;
-
-&lt;p&gt;In contrast, a self-sovereign system would allow you to “create an account” completely on your own. This can easily be done with public key cryptograpy, and it also paves the way for end-to-end encryption to make your messages private.&lt;/p&gt;
-
-&lt;p&gt;The main issue with this that you need to get more creative about avoiding spam (e.g. through white washing attacks), and ideally there is some other form of social discovery mechanism.&lt;/p&gt;
-
-&lt;p&gt;Just having a public key as an account isn’t enough though. If it goes through a central server, then nothing is stopping that server from arbitrarly blocking requests related to that public key. Of course, this also depends on how transparent such requests are. Fundamentally, lest we rely completely on goodwill, there needs to be multiple actors by which you can use the service. This naturally points to decentralization as a requirement. See counterpoint.&lt;/p&gt;
-
-&lt;p&gt;Even so, if the system is closed source we don’t know what it is doing. Perhaps the app communicating is also uploading data to another place, or somehow making it possible to see who is who and act accordingly.&lt;/p&gt;
-
-&lt;p&gt;You might notice that just one simple property, self-sovereign identity, leads to a slew of other requirements and properties. You might also notice that WeChat is far from alone in this, even if their identity requirements might be a bit stringent than, say, Telegram. Their control aspects are also a bit more extreme, at least for someone with western sensibilities &lt;sup id=&quot;fnref:2&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
-
-&lt;p&gt;Most user facing applications have similar issues, Google Apps/FB/Twitter etc. For popular tools that have this built in, we can look at git - which is truly decentralized and have keypair at the bottom. It is for a very specific technical domain, and even then people rely on Github. Key management is fairly difficult even for technical people, and for normal people even more so. Banks are generally far behind on this tech, relying on arcane procedures and special purpose hardware for 2FA. That’s another big issue.&lt;/p&gt;
-
-&lt;p&gt;Let’s shift gears a bit and talk about some other functional requirements.&lt;/p&gt;
-
-&lt;h3 id=&quot;routing---packets-from-a-to-b&quot;&gt;Routing - packets from A to B&lt;/h3&gt;
-
-&lt;p&gt;In order to get a lot of the features WeChat provides, we need the ability to do three things: communicate, store data, and transact with people. We need a bit more than that, but let’s focus on this for now.&lt;/p&gt;
-
-&lt;p&gt;To communicate with people, in the base case, we need to go from one phone to another phone that is separated by a large distance. This requires some form of routing. The most natural platform to build this on is the existing Internet, though not the only one. Most phones are resource restricted, and are only “on” for brief periods of time. This is needed to preserve battery and bandwidth. Additionally, Internet uses IPs as endpoints, which change as a phones move through space. NAT punching etc isn’t always perfect either. This means we need a way to get a message from one public key to another, and through some intermediate nodes. We can think of these nodes as a form of service network. Similar to how a power grid works, or phone lines, or collection of ISPs.&lt;/p&gt;
-
-&lt;p&gt;One important property here is to ensure we don’t end up in a situation like the centralized capture scenario above, something we’ve seen with centralized ISPs &lt;sup id=&quot;fnref:3&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;3&lt;/a&gt;&lt;/sup&gt; &lt;sup id=&quot;fnref:4&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;4&lt;/a&gt;&lt;/sup&gt; where they can choose which traffic is good and which is bad. We want to allow the use of different service nodes, just like if a restaurant gives you food poisioning you can go to the one next door and then the first one goes out of business after a while. And the circle of life continues.&lt;/p&gt;
-
-&lt;p&gt;We shouldn’t be naive though, and think that this is something nodes are likely to do for free. They need to be adequately compensated for their services, in some of incentivization scheme. That can either be monetary, or as in the case of Bittorrent, more of a barter situation where you use game theory to coordinate with strangers &lt;sup id=&quot;fnref:5&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:5&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;, and some form of reputation attached to it (for private trackers).&lt;/p&gt;
-
-&lt;p&gt;There are many ways of doing routing, and we won’t go into too much technical detail here. Suffice to say is that you likely want both a structured and unstructured alternative, and that these comes with several trade-offs when it comes to efficiency, metadata protection, ability to incentivize, compatibility with existing topologies, and suitability for mobilephones (mostly offline, bandwidth restricted, not directly connectable). Expect more on this in a future article.&lt;/p&gt;
-
-&lt;p&gt;Some of these considerations naturally leads us into the storage and transaction components.&lt;/p&gt;
-
-&lt;h3 id=&quot;storage---available-and-persistant-for-later&quot;&gt;Storage - available and persistant for later&lt;/h3&gt;
-
-&lt;p&gt;If mobile phones are mostly offline, we need some way to store these messages so they can be retrieved when online again. The same goes for various kinds attachments as well, and for when people are switching devices. A user might control their timeline, but in the WeChat case that timeline is stored on Tencent’s servers, and queried from there as well. This naturally needs to happen by some other service nodes. In the WeChat case, and for most IMs, the way these servers are paid for is through some indirect ad mechanism. The entity controlling these ads and so on is the same one as the one operating the servers for storage. A more direct model with different entities would see these services being compensated for their work.&lt;/p&gt;
-
-&lt;p&gt;We also need storage for attachments, mini-apps, as well as a way of understanding the current state of consensus when it comes to the compute/transact module. In the WeChat case, this state is completely handled by the bank institution or one of their partners, such as Alibaba. When it comes to bearer instruments like cash, no state needs to be kept as that’s a direct exchange in the physical world. This isn’t directly compatible with transfering value over a distance.&lt;/p&gt;
-
-&lt;p&gt;All of this state requires availability and persistance. It should be done in a trust minimized fashion and decentralized, which requires some form of incentivization for keeping data around. If it isn’t, you are relying on social cohesion which breaks down at very large scales.&lt;/p&gt;
-
-&lt;p&gt;Since data will be spread out across multiple nodes, you need a way to sync data and transfer it in the network. As well as being able to add and query data from it. All of this requires a routing component.&lt;/p&gt;
-
-&lt;p&gt;To make it more censorship resistant it might be better to keep it as a general-purpose store, i.e. individuals don’t need to know what they storing. Otherwise, you naturally end up in a situation where individual nodes can be pressured to not store certain content.&lt;/p&gt;
-
-&lt;h3 id=&quot;messaging---from-me-to-you-to-all-of-us-not-them&quot;&gt;Messaging - from me to you to all of us (not them)&lt;/h3&gt;
-
-&lt;p&gt;This builds on top of routing, but it has a slightly different focus. The goal is to allow for individuals and groups to communicate in a private, secure and censorship-resistant manner.&lt;/p&gt;
-
-&lt;p&gt;It also needs to provide a decent interface to the end user, in terms of dealing seamlessly with offline messages, providing reliable and timely messaging.&lt;/p&gt;
-
-&lt;p&gt;In order to get closer to the ideal of total anonymity, it is useful to be able to hide metadata of who is talking to whom. This applies to both normal communication as well as for transactions. Ideally, no one but the parties involved can see who is taking part in a conversation. This can be achieved through various techniques such as mixnets, anonymous credentials, private information retrieval, and so on. Many of these techniques have a fundamental trade-off with latency and bandwidth, something that is a big concern for mobilephones. Being able to do some form of tuning, in an adaptive node manner, depending on your threat model and current capabilities is useful here.&lt;/p&gt;
-
-&lt;p&gt;The baseline here is pseudonymity, and having tools to allow individuals to “cut off” ties to their real world identity and transactions. People act different in different circles in the real world, and this should be mimicked online as well. Your company, family or government shouldn’t be able to know what exactly you use your paycheck for, and who you are talking to.&lt;/p&gt;
-
-&lt;h3 id=&quot;compute---transact-contract-and-settle&quot;&gt;Compute - transact, contract and settle&lt;/h3&gt;
-
-&lt;p&gt;The most immediate need here is transaction from A to B. Direct exchange. There is also a more indirect need for private lawmaking and contracting.&lt;/p&gt;
-
-&lt;p&gt;We talked about routing and storage and how they likely need to be incentivized to work properly. How are they going to be compensated? While this could in theory work via existing banking system and so on, this would be rather heavy. It’d also very likely require tying your identifier to your legal name, something that goes against what we want to achieve. What we want is something that acts more as right-to-access, similar to the way cash functions in a society &lt;sup id=&quot;fnref:6&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:6&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;6&lt;/a&gt;&lt;/sup&gt;. I pay for a fruit with something that is valuable to you and then I’m on my way.&lt;/p&gt;
-
-&lt;p&gt;While there might be other candidates, such as pre-paid debit cards and so on, this transaction mode pretty much requires a cryptocurrency component. The alternative is to do it on a reputation basis, which might work for small communities, due to social cohesion, but quickly detoriates for large ones &lt;sup id=&quot;fnref:7&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:7&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;7&lt;/a&gt;&lt;/sup&gt;. Ad hoc models like private Bittorrent trackers are centralized and easy to censor.&lt;/p&gt;
-
-&lt;p&gt;Now, none of the existing cryptocurrency models are ideal. They also all suffer from lack of widespread use, and it is difficult to get onboarded to them in the first place. Transactions in Bitcoin are slow. Ethereum is faster and has more capabilities, but it still suffers from linking payments over time, which makes the privacy part of this more difficult. Zcash, Monero and similar are interesting, but also require more use. For Zcash, shielded transactions appear to only account for less than 2% of all transactions in 2019 &lt;sup id=&quot;fnref:8&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:8&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;8&lt;/a&gt;&lt;/sup&gt; &lt;sup id=&quot;fnref:9&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:9&quot; class=&quot;footnote&quot; rel=&quot;footnote&quot;&gt;9&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
-
-&lt;p&gt;Another dimension is what sets general purpose cryptocurrencies like Ethereum apart. Aside from just paying from A to B, you can encode rules about when something should be paid out and not. This is very useful for doing a form of private lawmaking, contracting, for setting up service agreements with these nodes. If there’s no trivial recourse as in the meatspace world, where you know someone’s name and you can sue them, you need a different kind of model.&lt;/p&gt;
-
-&lt;p&gt;What makes something like Zcash interesting is that it works more like digital cash. Instead of leaving a public trail for everyone, where someone can see where you got the initial money from and then trace you across various usage, for Zcash every hop is privacy preserving.&lt;/p&gt;
-
-&lt;p&gt;To fulfill the general goals of being censorship resistance and secure, it is also vital that the system being used stays online and can’t be easily disrupted. That points to disintermediation, as opposed to using gateways and exchanges. This is a case where something like cash, or gold, is more direct, since no one can censor this transaction without being physically present where this direct exchange is taking place. However, like before, this doesn’t work over distance.&lt;/p&gt;
-
-&lt;h3 id=&quot;secure-chat---just-our-business&quot;&gt;Secure chat - just our business&lt;/h3&gt;
-
-&lt;p&gt;Similar to the messaging module above. The distinction here is that we assume the network part has already taken place. Here we are interested in keeping the contents of messages private, so that means confidentiality/end-to-end encryption, integrity, authentication, as well as forward secrecy and plausible deniability. This means that even if there’s some actor that gets some private key material, or confiscated your phone, there is some level of…ephemerality to your conversations. Another issue here in terms of scalable private group chat.&lt;/p&gt;
-
-&lt;h3 id=&quot;extensible-mini-apps&quot;&gt;Extensible mini apps&lt;/h3&gt;
-
-&lt;p&gt;This relates to the compute and storage module above. Essentially we want to provide mini apps as in WeChat, but to do so in a way that is compatible with what we want to achieve more generally. This allows individuals and small businesses to create small tools for various purposes, and coordinate with strangers. E.g. booking a cab or getting an insurance, and so on.&lt;/p&gt;
-
-&lt;p&gt;This has a higher dependency on the contracting/general computation aspect. I.e. often it isn’t only a transaction, but you might want to encode some specific rules here that strangers can abide by without having too high trust requirements. As a simple example: escrows.&lt;/p&gt;
-
-&lt;p&gt;This also needs an open API that anyone can use. It should be properly secured, so using one doesn’t compromise the rest of the system it is operating in. To be censorship resistant it requires the routing and storage component to work properly.&lt;/p&gt;
-
-&lt;h2 id=&quot;where-are-we-now&quot;&gt;Where are we now?&lt;/h2&gt;
-
-&lt;p&gt;Let’s look back at some of desirable properties we set out in the beginning and see how close we are to building out the necessary components. Is it realistic at all or just a pipe dream? We’ll see that there are many building blocks in place, and there’s reason for hope.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Self-sovereignity identity&lt;/strong&gt;. Public key crypto and web of trust like constructs makes this possible.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Pseudonymity, and ideally total anonymity&lt;/strong&gt;. Pseudonymity can largely be achieved with public key crypto and open systems that allow for permissionless participation. For transactions, pseudonymity exists in most cryptocurrencies. The challenge is linkage across time, especially when interfacing with other “legacy” system. There are stronger constructs that are actively being worked on and are promising here, such as mixnets (Nym), mixers (Wasabi Wallet, Tornado.Cash) and zero knowledge proofs (Zcash, Ethereum, Starkware). This area of applied research has exploded over the last few years.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Private and secure communication&lt;/strong&gt;. Signal has pioneered a lot of this, following OTR. Double Ratchet, X3DH. E2EE is minimum these days, and properties like PFS and PD are getting better. For metadata protection, you have Tor, with its faults, and more active research on mixnets and private information retrieval, etc.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Censorship-resistance&lt;/strong&gt;. This covers a lot of ground across the spectrum. You have technologies like Bittorrent, Bitcoin/Ethereum, Tor obfuscated transports, E2EE by default, partial mesh networks in production, abilit to move/replicate host machines more quickly have all made this more of a reality than it used to be. this easier. Of course, techniques such as deep packet inspection and internet shutdowns have increased.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Decentralization&lt;/strong&gt;. Cryptocurrencies, projects like libp2p and IPFS. Need to be mindful here of many projects that claim decentralization but are still vulnerable to single points of failures, such as relying on gateways.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Built for mass adoption&lt;/strong&gt;. This one is more subjective. There’s definitely a lot of work to be done here, both when it comes to fundamental performance, key management and things like social discoverability. Directionally these things are improving and becoming easier for the average person but there is a lot ot be done here.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Scalability&lt;/strong&gt;. With projects like Ethereum 2.0 and IPFS more and more resources are a being put into this, both at the consensus/compute layer as well as networking (gossip, scalable Kademlia) layer. Also various layer 2 solutions for transactions.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Fundamentals in place to support great user experience&lt;/strong&gt;. Similar to built for mass adoption. As scalability becomes more important, more applied research is being done in the p2p area to improve things like latency, bandwidth.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Works for resource restricted devices, including smartphones&lt;/strong&gt;. Work in progress and not enough focus here, generally an after thought. Also have stateless clients etc.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Adaptive nodes&lt;/strong&gt;. See above. With subprotocols and capabilities in Ethereum and libp2p, this is getting easier.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Sustainable&lt;/strong&gt;. Token economics is a thing. While a lot of it won’t stay around, there are many more projects working on making themselves dispensable. Being open source, having an engaged community and enabling users run their own infrastructure. Users as stakeholders.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Spam resistant&lt;/strong&gt;. Tricky problem if you want to be pseudonymous, but some signs of hope with incentivization mechanisms, zero knowledge based signaling, etc. Together with various forms of rate limiting and better controlling of topology and network amplification. And just generally being battle-tested by real world attacks, such as historical Ethereum DDoS attacks.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Trust minimized&lt;/strong&gt;. Bitcoin. Zero knowledge provable computation. Open source. Reproducible builds. Signed binaries. Incentive compatible structures. Independent audits. Still a lot of work, but getting better.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Open source&lt;/strong&gt;. Big and only getting bigger. Including mainstream companies.&lt;/p&gt;
-
-&lt;h2 id=&quot;whats-next&quot;&gt;What’s next?&lt;/h2&gt;
-
-&lt;p&gt;We’ve look at what WeChat provides and what we’d like an alternative to look like. We’ve also seen a few principal modules that are necessary to achieve those goals. To achieve all of this is a daunting task, and one might call it overly ambitiuous. We’ve also seen how far we’ve come with some of the goals, and how a lot of the pieces are there, in one form or another. Then it is a question of putting them all together in the right mix.&lt;/p&gt;
-
-&lt;p&gt;The good news is that a lot of people are working all these building blocks and thinking about these problems. Compared to a few years ago we’ve come quite far when it comes to p2p infrastructure, privacy, security, scalability, and general developer mass and mindshare. If you want to join us in building some of these building blocks, and assembling them, check out our forum.&lt;/p&gt;
-
-&lt;p&gt;PS. We are &lt;a href=&quot;https://status.im/our_team/open_positions.html&quot;&gt;hiring protocol engineers&lt;/a&gt;. DS&lt;/p&gt;
-
-&lt;h2 id=&quot;acknowledgements&quot;&gt;Acknowledgements&lt;/h2&gt;
-
-&lt;p&gt;Corey, Dean, Jacek.&lt;/p&gt;
-
-&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
-
-&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
-  &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;Mandatory SIM card registration laws: https://privacyinternational.org/long-read/3018/timeline-sim-card-registration-laws &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li id=&quot;fn:2&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;On WeChat keyword censorship: https://citizenlab.ca/2016/11/wechat-china-censorship-one-app-two-systems/ &lt;a href=&quot;#fnref:2&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li id=&quot;fn:3&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;Net Neutrality: https://www.eff.org/issues/net-neutrality &lt;a href=&quot;#fnref:3&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li id=&quot;fn:4&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;ISP centralization: https://ilsr.org/repealing-net-neutrality-puts-177-million-americans-at-risk/ &lt;a href=&quot;#fnref:4&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li id=&quot;fn:5&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;Incentives Build Robustness in BitTorrent bittorrent.org/bittorrentecon.pdf &lt;a href=&quot;#fnref:5&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li id=&quot;fn:6&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;The Case for Electronic Cash:  https://coincenter.org/files/2019-02/the-case-for-electronic-cash-coin-center.pdf &lt;a href=&quot;#fnref:6&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li id=&quot;fn:7&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;Money, blockchains, and social scalability: http://unenumerated.blogspot.com/2017/02/money-blockchains-and-social-scalability.html &lt;a href=&quot;#fnref:7&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li id=&quot;fn:8&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;Zcash private transactions (partial paywall): https://www.theblockcrypto.com/genesis/48413/an-analysis-of-zcashs-private-transactions &lt;a href=&quot;#fnref:8&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li id=&quot;fn:9&quot; role=&quot;doc-endnote&quot;&gt;
-      &lt;p&gt;Shielded transactions usage (stats page 404s): https://z.cash/support/faq/ &lt;a href=&quot;#fnref:9&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ol&gt;
-&lt;/div&gt;</content><author><name>oskarth</name></author><category term="research" /><summary type="html">What would it take to replace WeChat? More specifically, what would a self-sovereign, private, censorship-resistant and open alternative look like? One that allows people to communicate, coordinate and transact freely.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://vac.dev/assets/img/tianstatue.jpg" /><media:content medium="image" url="https://vac.dev/assets/img/tianstatue.jpg" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;/ul&gt;</content><author><name>dean</name></author><category term="research" /><summary type="html">Disclaimer: some of the numbers found in this write-up could be inaccurate. They are based on the current understanding of theoretical parts of the protocol itself by the author and are meant to provide a rough overview rather than bindable numbers.</summary></entry></feed>
