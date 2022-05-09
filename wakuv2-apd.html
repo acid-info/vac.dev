@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en-US">
+  <head>
+  
+  <title>Vac - Waku v2 Ambient Peer Discovery</title>
+  
+
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Vac</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <script async defer src="https://cdn.simpleanalytics.io/hello.js"></script>
+  <noscript><img src="https://api.simpleanalytics.io/hello.gif" alt="" /></noscript>
+
+  <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
+  <script>
+    (function (f, a, t, h, o, m) {
+      a[h] =
+        a[h] ||
+        function () {
+          (a[h].q = a[h].q || []).push(arguments);
+        };
+      (o = f.createElement("script")), (m = f.getElementsByTagName("script")[0]);
+      o.async = 1;
+      o.src = t;
+      o.id = "fathom-script";
+      m.parentNode.insertBefore(o, m);
+    })(document, window, "//fathom.status.im/tracker.js", "fathom");
+    fathom("set", "siteId", "YELIA");
+    fathom("trackPageview");
+  </script>
+  <!-- / Fathom -->
+
+  <!-- Twitter cards -->
+  <meta name="twitter:site" content="@vacp2p" />
+  <meta name="twitter:creator" content="@kaiserd" />
+  <meta name="twitter:title" content="Waku v2 Ambient Peer Discovery" />
+
+  
+  <meta name="twitter:description" content="Introducing and discussing ambient peer discovery methods currently used by Waku v2, as well as future plans in this area." />
+   
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://vac.dev/assets/img/waku_v2_discv5_random_walk_estimation.svg" />
+  
+  <!-- end of Twitter cards -->
+
+  <link rel="shortcut icon" href="/assets/img/favicon.png" type="image/png" />
+  <link rel="preload" href="/fonts/OpenSans-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/OpenSans-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/OpenSans-SemiBoldItalic.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+
+  <body class="h-full flex flex-col font-body">
+    <div class="flex-grow container max-w-screen-xl mx-auto px-5 md:px-12 lg:pt-6">
+      <header class="sm:sticky sm:top-0 bg-white z-50">
+  <div class="container max-w-screen-xl sm:border-b">
+    <div class="nav-section flex justify-between items-center py-3 md:py-5 lg:py-10">
+      <div class="logo md:pr-8 l:p-0">
+        <a href="/"><img src="/assets/img/logo.png" alt="Vac logo" class="w-9 h-11" /></a>
+      </div>
+      <div class="flex justify-between items-center w-9/12">
+        <div class="burger block sm:hidden z-50">
+          <button class="burger__button burger__button--open fixed top-2 right-5 w-12 h-12" type="button" aria-label="Mobile menu button">
+            <img class="burger__icon" src="/assets/img/burger.svg" alt="Open menu button" />
+          </button>
+          <button class="burger__button burger__button--close hidden fixed top-2 right-5 w-12 h-12" type="button" aria-label="Close mobile menu button">
+            <img class="burger__icon burger__icon--close" src="/assets/img/close.svg" alt="Close menu button" />
+          </button>
+        </div>
+
+        <nav class="nav max-w-screen-xm md:max-w-screen-sl container">
+          <ul class="nav__list hidden sm:flex justify-between container text-xs font-semibold md:pr-8 l:p-0">
+             <li class="hover:opacity-50">
+  
+  <a class="nav__link" href="/#work">Work</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a class="nav__link" href="/#about">About</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a class="nav__link" href="/#join">Join Vac</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a class="nav__link" href="/research-log">Research log</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a class="nav__link" href="/media">Media</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a href="https://rfc.vac.dev/" target="_blank" rel="noopener noreferrer">Specs</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a href="https://forum.vac.dev/" target="_blank" rel="noopener noreferrer">Forum</a>
+  
+</li>
+ 
+          </ul>
+        </nav>
+
+        <ul class="social items-center hidden md:flex">
+          <li class="pr-5">
+  <a href="https://twitter.com/vacp2p" target="_blank" rel="noopener noreferrer">
+    <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="hover:opacity-50">
+      <path
+        d="M24.8872 3.04499C23.9872 3.43499 23.0572 3.70498 22.0672 3.82499C23.0872 3.22498 23.8672 2.26499 24.2272 1.09499C23.2672 1.66499 22.2172 2.05499 21.1072 2.29499C20.2072 1.33499 18.9172 0.734985 17.5072 0.734985C14.7772 0.734985 12.5872 2.95499 12.5872 5.65499C12.5872 6.04499 12.6172 6.40498 12.7072 6.76498C8.62721 6.58498 5.02721 4.60498 2.59721 1.63499C0.857207 4.75498 2.80721 7.33499 4.09721 8.20499C3.31721 8.20499 2.53721 7.96499 1.87721 7.60499C1.87721 10.035 3.58721 12.045 5.80721 12.495C5.32721 12.645 4.24721 12.735 3.58721 12.585C4.21721 14.535 6.04721 15.975 8.17721 16.005C6.49721 17.325 4.03721 18.375 0.887207 18.045C3.07721 19.455 5.65721 20.265 8.44721 20.265C17.5072 20.265 22.4272 12.765 22.4272 6.28499C22.4272 6.07499 22.4272 5.86499 22.3972 5.65499C23.4172 4.90499 24.2572 4.03499 24.8872 3.04499Z"
+        fill="#151512"
+      />
+    </svg>
+  </a>
+</li>
+<li class="pr-5">
+  <a href="https://github.com/vacp2p" target="_blank" rel="noopener noreferrer">
+    <svg width="26" height="25" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="hover:opacity-50">
+      <path
+        d="M12.8857 0.856567C6.26021 0.856567 0.915339 6.20154 0.950043 12.7951C0.9778 18.0687 4.43935 22.5427 9.21766 24.1227C9.81824 24.2327 10.0353 23.864 10.0336 23.5474C10.0321 23.2635 10.0177 22.5129 10.0065 21.5171C6.67274 22.238 5.95552 19.9163 5.95552 19.9163C5.40376 18.5369 4.61433 18.1698 4.61433 18.1698C3.51994 17.4296 4.69151 17.4444 4.69151 17.4444C5.89646 17.5291 6.53549 18.6751 6.53549 18.6751C7.61609 20.4989 9.35182 19.9727 10.0342 19.6665C10.1382 18.8951 10.4459 18.3689 10.7878 18.0702C8.12222 17.7684 5.31483 16.7443 5.29076 12.1708C5.2839 10.8672 5.74629 9.80152 6.50989 8.96619C6.3838 8.66445 5.96641 7.45009 6.61027 5.80766C6.61027 5.80766 7.61658 5.4866 9.9167 7.03094C10.8723 6.76636 11.8976 6.63408 12.9191 6.62962C13.9376 6.63556 14.9658 6.76636 15.9257 7.03242C18.2081 5.48809 19.2163 5.80914 19.2163 5.80914C19.8789 7.45306 19.4743 8.66594 19.3529 8.96767C20.1268 9.80301 20.5959 10.8687 20.6028 12.1723C20.6269 16.7577 17.8272 17.767 15.1558 18.0628C15.5882 18.4314 15.976 19.1597 15.9819 20.273C15.9903 21.8693 15.9821 23.1565 15.9841 23.5474C15.9858 23.867 16.2038 24.2386 16.8122 24.1212C21.5663 22.5397 24.9778 18.0672 24.95 12.7951C24.9153 6.20154 19.5142 0.856567 12.8857 0.856567Z"
+        fill="#151512"
+      />
+    </svg>
+  </a>
+</li>
+<li>
+  <a href="https://discord.gg/PQFdubGt6d" target="_blank" rel="noopener noreferrer">
+    <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="hover:opacity-50">
+      <path
+        d="M22.7861 9.04256C21.8482 5.74455 20.7799 4.04048 20.7627 4.00991C20.7017 3.93459 19.189 2.104 15.5271 0.75L15.0353 2.0764C16.7774 2.72057 18.0116 3.50643 18.6899 4.01419C16.6599 3.40408 14.2431 3.03041 12.1008 3.03041C9.95851 3.03041 7.53775 3.40408 5.50128 4.01419C6.18496 3.50648 7.42744 2.72057 9.17631 2.0764L8.69846 0.75C5.02238 2.104 3.49044 3.93459 3.42863 4.00991C3.41108 4.04048 2.32479 5.74455 1.35221 9.04256C0.414855 12.2208 0.0415214 16.7045 0.027872 16.8843C0.109225 17.0131 1.97891 20.25 7.12077 20.25L8.43406 18.3536C6.97595 17.964 5.58693 17.3357 4.31689 16.4832L5.10228 15.3069C7.15122 16.6822 9.54509 17.4092 12.0251 17.4092C14.5051 17.4092 16.9067 16.6822 18.9701 15.3069L19.7431 16.4832C18.4641 17.3357 17.0684 17.964 15.6062 18.3536L16.8995 20.25C22.0414 20.25 23.9452 17.0131 24.0279 16.8843C24.0161 16.7045 23.69 12.2208 22.7861 9.04256ZM8.79853 12.7392H7.39228L7.40468 10.3841H8.81093L8.79853 12.7392ZM16.7071 12.7392H15.3008L15.3132 10.3841H16.7195L16.7071 12.7392Z"
+        fill="#151512"
+      />
+    </svg>
+  </a>
+</li>
+
+        </ul>
+      </div>
+
+      <div class="overlay container max-w-screen-sm w-full hidden sm:hidden fixed top-0 right-0 h-screen bg-black bg-opacity-40 z-30">
+        <nav class="nav-mobile hidden fixed top-0 right-0 flex flex-col justify-between items-center pt-14 px-12 pb-5 bg-white w-9/12 h-3/4 z-40">
+          <ul class="nav__list flex flex-col flex-1 justify-between items-center container box-content w-32 h-auto max-h-nav text-xs font-normal">
+             <li class="hover:opacity-50">
+  
+  <a class="nav__link" href="/#work">Work</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a class="nav__link" href="/#about">About</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a class="nav__link" href="/#join">Join Vac</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a class="nav__link" href="/research-log">Research log</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a class="nav__link" href="/media">Media</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a href="https://rfc.vac.dev/" target="_blank" rel="noopener noreferrer">Specs</a>
+  
+</li>
+  <li class="hover:opacity-50">
+  
+  <a href="https://forum.vac.dev/" target="_blank" rel="noopener noreferrer">Forum</a>
+  
+</li>
+ 
+          </ul>
+          <ul class="social items-center flex mt-8">
+            <li class="pr-5">
+  <a href="https://twitter.com/vacp2p" target="_blank" rel="noopener noreferrer">
+    <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="hover:opacity-50">
+      <path
+        d="M24.8872 3.04499C23.9872 3.43499 23.0572 3.70498 22.0672 3.82499C23.0872 3.22498 23.8672 2.26499 24.2272 1.09499C23.2672 1.66499 22.2172 2.05499 21.1072 2.29499C20.2072 1.33499 18.9172 0.734985 17.5072 0.734985C14.7772 0.734985 12.5872 2.95499 12.5872 5.65499C12.5872 6.04499 12.6172 6.40498 12.7072 6.76498C8.62721 6.58498 5.02721 4.60498 2.59721 1.63499C0.857207 4.75498 2.80721 7.33499 4.09721 8.20499C3.31721 8.20499 2.53721 7.96499 1.87721 7.60499C1.87721 10.035 3.58721 12.045 5.80721 12.495C5.32721 12.645 4.24721 12.735 3.58721 12.585C4.21721 14.535 6.04721 15.975 8.17721 16.005C6.49721 17.325 4.03721 18.375 0.887207 18.045C3.07721 19.455 5.65721 20.265 8.44721 20.265C17.5072 20.265 22.4272 12.765 22.4272 6.28499C22.4272 6.07499 22.4272 5.86499 22.3972 5.65499C23.4172 4.90499 24.2572 4.03499 24.8872 3.04499Z"
+        fill="#151512"
+      />
+    </svg>
+  </a>
+</li>
+<li class="pr-5">
+  <a href="https://github.com/vacp2p" target="_blank" rel="noopener noreferrer">
+    <svg width="26" height="25" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="hover:opacity-50">
+      <path
+        d="M12.8857 0.856567C6.26021 0.856567 0.915339 6.20154 0.950043 12.7951C0.9778 18.0687 4.43935 22.5427 9.21766 24.1227C9.81824 24.2327 10.0353 23.864 10.0336 23.5474C10.0321 23.2635 10.0177 22.5129 10.0065 21.5171C6.67274 22.238 5.95552 19.9163 5.95552 19.9163C5.40376 18.5369 4.61433 18.1698 4.61433 18.1698C3.51994 17.4296 4.69151 17.4444 4.69151 17.4444C5.89646 17.5291 6.53549 18.6751 6.53549 18.6751C7.61609 20.4989 9.35182 19.9727 10.0342 19.6665C10.1382 18.8951 10.4459 18.3689 10.7878 18.0702C8.12222 17.7684 5.31483 16.7443 5.29076 12.1708C5.2839 10.8672 5.74629 9.80152 6.50989 8.96619C6.3838 8.66445 5.96641 7.45009 6.61027 5.80766C6.61027 5.80766 7.61658 5.4866 9.9167 7.03094C10.8723 6.76636 11.8976 6.63408 12.9191 6.62962C13.9376 6.63556 14.9658 6.76636 15.9257 7.03242C18.2081 5.48809 19.2163 5.80914 19.2163 5.80914C19.8789 7.45306 19.4743 8.66594 19.3529 8.96767C20.1268 9.80301 20.5959 10.8687 20.6028 12.1723C20.6269 16.7577 17.8272 17.767 15.1558 18.0628C15.5882 18.4314 15.976 19.1597 15.9819 20.273C15.9903 21.8693 15.9821 23.1565 15.9841 23.5474C15.9858 23.867 16.2038 24.2386 16.8122 24.1212C21.5663 22.5397 24.9778 18.0672 24.95 12.7951C24.9153 6.20154 19.5142 0.856567 12.8857 0.856567Z"
+        fill="#151512"
+      />
+    </svg>
+  </a>
+</li>
+<li>
+  <a href="https://discord.gg/PQFdubGt6d" target="_blank" rel="noopener noreferrer">
+    <svg width="25" height="21" viewBox="0 0 25 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="hover:opacity-50">
+      <path
+        d="M22.7861 9.04256C21.8482 5.74455 20.7799 4.04048 20.7627 4.00991C20.7017 3.93459 19.189 2.104 15.5271 0.75L15.0353 2.0764C16.7774 2.72057 18.0116 3.50643 18.6899 4.01419C16.6599 3.40408 14.2431 3.03041 12.1008 3.03041C9.95851 3.03041 7.53775 3.40408 5.50128 4.01419C6.18496 3.50648 7.42744 2.72057 9.17631 2.0764L8.69846 0.75C5.02238 2.104 3.49044 3.93459 3.42863 4.00991C3.41108 4.04048 2.32479 5.74455 1.35221 9.04256C0.414855 12.2208 0.0415214 16.7045 0.027872 16.8843C0.109225 17.0131 1.97891 20.25 7.12077 20.25L8.43406 18.3536C6.97595 17.964 5.58693 17.3357 4.31689 16.4832L5.10228 15.3069C7.15122 16.6822 9.54509 17.4092 12.0251 17.4092C14.5051 17.4092 16.9067 16.6822 18.9701 15.3069L19.7431 16.4832C18.4641 17.3357 17.0684 17.964 15.6062 18.3536L16.8995 20.25C22.0414 20.25 23.9452 17.0131 24.0279 16.8843C24.0161 16.7045 23.69 12.2208 22.7861 9.04256ZM8.79853 12.7392H7.39228L7.40468 10.3841H8.81093L8.79853 12.7392ZM16.7071 12.7392H15.3008L15.3132 10.3841H16.7195L16.7071 12.7392Z"
+        fill="#151512"
+      />
+    </svg>
+  </a>
+</li>
+
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+      <main class="bg-white text-black flex flex-col"><section class="container max-w-screen-xl flex flex-col items-center pt-10 pb-0 md:pb-10 lg:pb-0">
+  <div class="info-block max-w-680 pb-5 sm:pb-10 overflow-hidden">
+    <div class="post mb-10">
+      <h1 class="text-xl md:text-xxl mb-5 sm:max-w-md lg:max-w-2xl">Waku v2 Ambient Peer Discovery</h1>
+      <div>
+        <span class="text-s lg:text-base"> 09 May 2022 • by </span>
+        <a href="/authors/kaiserd" class="text-s lg:text-base font-bold hover:underline">kaiserd</a>
+      </div>
+    </div>
+    <div class="post__content"><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML">
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true},
+      jax: ["input/TeX","input/MathML","input/AsciiMath","output/CommonHTML"],
+      extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js", "[Contrib]/a11y/accessibility-menu.js"],
+      TeX: {
+      extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"],
+      equationNumbers: {
+      autoNumber: "AMS"
+      }
+    }
+  });
+</script>
+
+<p><a href="https://rfc.vac.dev/spec/10/">Waku v2</a> comprises a set of modular protocols for secure, privacy preserving communication.
+Avoiding centralization, these protocols exchange messages over a P2P network layer.
+In order to build a P2P network, participating nodes first have to discover peers within this network.
+This is where <a href="https://docs.libp2p.io/concepts/publish-subscribe/#discovery"><em>ambient peer discovery</em></a> comes into play:
+it allows nodes to find peers, making it an integral part of any decentralized application.</p>
+
+<p>In this post the term <em>node</em> to refers to <em>our</em> endpoint or the endpoint that takes action,
+while the term <em>peer</em> refers to other endpoints in the P2P network.
+These endpoints can be any device connected to the Internet: e.g. servers, PCs, notebooks, mobile devices, or applications like a browser.
+As such, nodes and peers are the same. We use these terms for the ease of explanation without loss of generality.</p>
+
+<p>In Waku’s modular design, ambient peer discovery is an umbrella term for mechanisms that allow nodes to find peers.
+Various ambient peer discovery mechanisms are supported, and each is specified as a separate protocol.
+Where do these protocols fit into Waku’s protocol stack?
+The P2P layer of Waku v2 builds on <a href="https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/README.md">libp2p gossipsub</a>.
+Nodes participating in a gossipsub protocol manage a mesh network that is used for routing messages.
+This mesh network is an <a href="https://en.wikipedia.org/wiki/Peer-to-peer#Unstructured_networks">unstructured P2P network</a>
+offering high robustness and resilience against attacks.
+Gossipsub implements many improvements overcoming the shortcomings typically associated with unstructured P2P networks, e.g. inefficient flooding based routing.
+The gossipsub mesh network is managed in a decentralized way, which requires each node to know other participating peers.
+Waku v2 may use any combination of its ambient discovery protocols to find appropriate peers.</p>
+
+<p>Summarizing, Waku v2 comprises a <em>peer management layer</em> based on libp2p gossipsub,
+which manages the peers of nodes, and an <em>ambient peer discovery layer</em>,
+which provides information about peers to the peer management layer.</p>
+
+<p>We focus on ambient peer discovery methods that are in line with our goal of building a fully decentralized, generalized, privacy-preserving and censorship-resistant messaging protocol.
+Some of these protocols still need adjustments to adhere to our privacy and anonymity requirements. For now, we focus on operational stability and feasibility.
+However, when choosing techniques, we pay attention to selecting mechanisms that can feasibly be tweaked for privacy in future research efforts.
+Because of the modular design and the fact that Waku v2 has several discovery methods at its disposal, we could even remove a protocol in case future evaluation deems it not fitting our standards.</p>
+
+<p>This post covers the current state and future considerations of ambient peer discovery for Waku v2,
+and gives reason for changes and modifications we made or plan to make.
+The ambient peer discovery protocols currently supported by Waku v2 are a modified version of Ethereum’s <a href="https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5.md">Discovery v5</a>
+and <a href="https://vac.dev/dns-based-discovery">DNS-based discovery</a>.
+Waku v2 further supports <a href="https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/gossipsub-v1.1.md#prune-backoff-and-peer-exchange">gossipsub’s peer exchange protocol</a>.
+In addition, we plan to introduce protocols for general peer exchange and capability discovery, respectively.
+The former allows resource restricted nodes to outsource querying for peers to stronger peers,
+the latter allows querying peers for their supported capabilities.
+Besides these new protocols, we are working on integrating capability discovery in our existing ambient peer discovery protocols.</p>
+
+<h2 id="static-node-lists">Static Node Lists</h2>
+
+<p>The simplest method of learning about peers in a P2P network is via static node lists.
+These can be given to nodes as start-up parameters or listed in a config-file.
+They can also be provided in a script-parseable format, e.g. in JSON.
+While this method of providing bootstrap nodes is very easy to implement, it requires static peers, which introduce centralized elements.
+Also, updating static peer information introduces significant administrative overhead:
+code and/or config files have to be updated and released.
+Typically, static node lists only hold a small number of bootstrap nodes, which may lead to high load on these nodes.</p>
+
+<h2 id="dns-based-discovery">DNS-based Discovery</h2>
+
+<p>Compared to static node lists,
+<a href="https://vac.dev/dns-based-discovery">DNS-based discovery</a> (specified in <a href="https://eips.ethereum.org/EIPS/eip-1459">EIP-1459</a>)
+provides a more dynamic way of discovering bootstrap nodes.
+It is very efficient, can easily be handled by resource restricted devices and provides very good availability.
+In addition to a naive DNS approach, Ethereum’s DNS-based discovery introduces efficient authentication leveraging <a href="https://en.wikipedia.org/wiki/Merkle_tree">Merkle trees</a>.</p>
+
+<p>A further advantage over static node lists is the separation of code/release management and bootstrap node management.
+However, changing and updating the list of bootstrap nodes still requires administrative privileges because DNS records have to be added or updated.</p>
+
+<p>While this method of discovery still requires centralized elements,
+node list management can be delegated to various DNS zones managed by other entities mitigating centralization.</p>
+
+<h2 id="discovery-v5">Discovery V5</h2>
+
+<p>A much more dynamic method of ambient peer discovery is <a href="https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5.md">Discovery v5</a>, which is Ethereum’s peer discovery protocol.
+It is based on the <a href="https://en.wikipedia.org/wiki/Kademlia">Kademlia</a> distributed hashtable (DHT).
+An <a href="https://vac.dev/kademlia-to-discv5">introduction to discv5 and its history</a>, and a <a href="https://vac.dev/feasibility-discv5">discv5 Waku v2 feasibility study</a>
+can be found in previous posts on this research log.</p>
+
+<p>We use Discovery v5 as an ambient peer discovery method for Waku v2 because it is decentralized, efficient, actively researched, and has web3 as its main application area.
+Discv5 also offers mitigation techniques for various attacks, which we cover later in this post.</p>
+
+<p>Using a DHT (structured P2P network) as a means for ambient peer discovery, while using the gossipsub mesh network (unstructured P2P network) for transmitting actual messages,
+Waku v2 leverages advantages from both worlds.
+One of the main benefits of DHTs is offering a global view over participating nodes. 
+This, in turn, allows sampling random sets of nodes which is important for equally distributing load.
+Gossipsub, on the other hand, offers great robustness and resilience against attacks.
+Even if discv5 discovery should not work in advent of a DoS attack, Waku v2 can still operate switching to different discovery methods.</p>
+
+<p>Discovery methods that use separate P2P networks still depend on bootstrapping,
+which Waku v2 does via parameters on start-up or via DNS-based discovery.
+This might raise the question of why such discovery methods are beneficial.
+The answer lies in the aforementioned global view of DHTs. Without discv5 and similar methods, the bootstrap nodes are used as part of the gossipsub mesh.
+This might put heavy load on these nodes and further, might open pathways to inference attacks.
+Discv5, on the other hand, uses the bootstrap nodes merely as an entry to the discovery network and can provide random sets of nodes (sampled from a global view)
+for bootstrapping or expanding the mesh.</p>
+
+<h3 id="dht-background">DHT Background</h3>
+
+<p>Distributed Hash Tables are a class of structured P2P overlay networks.
+A DHT can be seen as a distributed node set of which each node is responsible for a part of the hash space.
+In contrast to unstructured P2P networks, e.g. the mesh network maintained by gossipsub,
+DHTs have a global view over the node set and the hash space (assuming the participating nodes behave well).</p>
+
+<p>DHTs are susceptible to various kinds of attacks, especially <a href="https://en.wikipedia.org/wiki/Sybil_attack">Sybil attacks</a>
+and <a href="https://www.usenix.org/conference/usenixsecurity15/technical-sessions/presentation/heilman">eclipse attacks</a>.
+While security aspects have been addressed in various research papers, general practical solutions are not available.
+However, discv5 introduced various practical mitigation techniques.</p>
+
+<h3 id="random-walk-discovery">Random Walk Discovery</h3>
+
+<p>While discv5 is based on the Kademlia DHT, it only uses the <em>distributed node set</em> aspect of DHTs.
+It does not map values (items) into the distributed hash space.
+This makes sense, because the main purpose of discv5 is discovering other nodes that support discv5, which are expected to be Ethereum nodes.
+Ethereum nodes that want to discover other Ethereum nodes simply query the discv5 network for a random set of peers.
+If Waku v2 would do the same, only a small subset of the retrieved nodes would support Waku v2.</p>
+
+<p>A first naive solution for Waku v2 discv5 discovery is</p>
+
+<ul>
+  <li>retrieve a random node set, which is achieved by querying for a set of randomly chosen node IDs</li>
+  <li>filter the returned nodes on the query path based on Waku v2 capability via the <a href="https://rfc.vac.dev/spec/31/">Waku v2 ENR</a></li>
+  <li>repeat until enough Waku v2 capable nodes are found</li>
+</ul>
+
+<p>This query process boils down to random walk discovery, which is very resilient against attacks, but also very inefficient if the number of nodes supporting the desired capability is small.
+We refer to this as the needle-in-the-haystack problem.</p>
+
+<h3 id="random-walk-performance-estimation">Random Walk Performance Estimation</h3>
+
+<p>This subsection provides a rough estimation of the overhead introduced by random walk discovery.</p>
+
+<p>Given the following parameters:</p>
+
+<ul>
+  <li>$n$ number of total nodes participating in discv5</li>
+  <li>$p$ percentage of nodes supporting Waku</li>
+  <li>$W$ the event of having at least one Waku node in a random sample</li>
+  <li>$k$ the size of a random sample (default = 16)</li>
+  <li>$\alpha$ the number of parallel queries started</li>
+  <li>$b$ bits per hop</li>
+  <li>$q$ the number of queries</li>
+</ul>
+
+<p>A query takes $log_{2^b}n$ hops to retrieve a random sample of nodes.</p>
+
+<p>$P(W) = 1 - (1-p/100)^k$ is the probability of having at least one Waku node in the sample.</p>
+
+<p>$P(W^q) = 1 - (1-p/100)^{kq}$  is the probability of having at least one Waku node in the union of $q$ samples.</p>
+
+<p>Expressing this in terms of $q$, we can write:
+\(P(W^q) = 1 - (1-p/100)^{kq} \iff  q = log_{(1-p/100)^k}(1-P(W^q))\)</p>
+
+<p>Figure 1 shows a log-log plot for $P(W^q) = 90\%$.</p>
+
+<p align="center">
+    <img src="../assets/img/waku_v2_discv5_random_walk_estimation.svg" width="75%" />
+    <br />
+    Figure 1: log-log plot showing the number of queries necessary to retrieve a Waku v2 node with a probability of 90% in relation to the Waku v2 node concentration in the network.
+</p>
+
+<p>Assuming $p=0.1$, we would need</p>
+
+\[0.9 = 1 - (1-0.1/100)^{16q} =&gt; q \approx 144\]
+
+<p>queries to get a Waku node with 90% probability, which leads to $\approx 144 * 18 = 2592$ overlay hops.
+Choosing $b=3$ would reduce the number to $\approx 144 * 6 = 864$.
+Even when choosing $\alpha = 10$ we would have to wait at least 80 RTTs.
+This effort is just for retrieving a single Waku node. Ideally, we want at least 3 Waku nodes for bootstrapping a Waku relay.</p>
+
+<p><a href="https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5-theory.md#ad-placement-and-topic-radius">The discv5 doc</a> roughly estimates $p=1%$ to be the threshold for acceptably efficient random walk discovery. 
+This is in line with our estimation:</p>
+
+\[0.9 = 1 - (1-1/100)^{16q} =&gt; q \approx 14\]
+
+<p>The number of necessary queries is linearly dependent on the percentage $p$ of Waku nodes.
+The number of hops per query is logarithmically dependent on $n$.
+Thus, random walk searching is inefficient for small percentages $p$.
+Still, random walks are more resilient against attacks.</p>
+
+<p>We can conclude that a Waku node concentration below 1% renders vanilla discv5 unfit for our needs.
+Our current solution and future plans for solving this issue are covered in the next subsections.</p>
+
+<h3 id="simple-solution-separate-discovery-network">Simple Solution: Separate Discovery Network</h3>
+
+<p>The simple solution we currently use for <a href="https://rfc.vac.dev/spec/33/">Waku v2 discv5</a> is a separate discv5 network.
+All (well behaving) nodes in this network support Waku v2, resulting in a very high query efficiency.
+However, this solution reduces resilience because the difficulty of attacking a DHT scales with the number of participating nodes.</p>
+
+<h3 id="discv5-topic-discovery">Discv5 Topic Discovery</h3>
+
+<p>We did not base our solution on the <a href="https://github.com/ethereum/devp2p/blob/master/discv5/discv5-theory.md#topic-advertisement">current version of discv5 topic discovery</a>,
+because, similar to random walk discovery, it suffers from poor performance for relatively rare capabilities/topics.</p>
+
+<p>However, there is <a href="https://github.com/harnen/service-discovery-paper">ongoing research</a> in discv5 topic discovery which is close to ideas we explored when pondering efficient and resilient Waku discv5 solutions.
+We keep a close eye on this research, give feedback, and make suggestions, as we plan to switch to this version of topic discovery in the future.</p>
+
+<p>In a nutshell, topic discovery will manage separate routing tables for each topic.
+These topic specific tables are initialized with nodes from the discv5 routing table.
+While the buckets of the discv5 routing table represent distance intervals from the node’s <code class="highlighter-rouge">node ID</code>, the topic table buckets represent distance intervals from <code class="highlighter-rouge">topic ID</code>s.</p>
+
+<p>Nodes that want to register a topic try to register that topic at one random peer per bucket.
+This leads to registering the topic at peers in closer and closer neighbourhoods around the topic ID, which
+yields a very efficient and resilient compromise between random walk discovery and DHT discovery.
+Peers in larger neighbourhoods around the topic ID are less efficient to discover, however more resilient against eclipse attacks and vice versa.</p>
+
+<p>Further, this works well with the overload and DoS protection discv5 employs.
+Discv5 limits the amount of nodes registered per topic on a single peer. Further, discv5 enforces a waiting time before nodes can register topics at peers.
+So, for popular topics, a node might fail to register the topic in a close neighbourhood.
+However, because the topic is popular (has a high occurrence percentage $p$), it can still be efficiently discovered.</p>
+
+<p>In the future, we also plan to integrate Waku v2 capability discovery, which will not only allow asking for nodes that support Waku v2,
+but asking for Waku v2 nodes supporting specific Waku v2 protocols like filter or store.
+For the store protocol we envision sub-capabilities reflecting message topics and time frames of messages.
+We will also investigate related security implications.</p>
+
+<h3 id="attacks-on-dhts">Attacks on DHTs</h3>
+
+<p>In this post, we only briefly describe common attacks on DHTs.
+These attacks are mainly used for denial of service (DoS),
+but can also used as parts of more sophisticated attacks, e.g. deanonymization attacks.
+A future post on this research log will cover security aspects of ambient peer discovery with a focus on privacy and anonymity.</p>
+
+<p><em>Sybil Attack</em></p>
+
+<p>The power of an attacker in a DHT is proportional to the number of controlled nodes.
+Controlling nodes comes at a high resource cost and/or requires controlling a botnet via a preliminary attack.</p>
+
+<p>In a Sybil attack, an attacker generates lots of virtual node identities.
+This allows the attacker to control a large portion of the ID space in a DHT at a relatively low cost.
+Sybil attacks are especially powerful when the attacker can freely choose the IDs of generated nodes,
+because this allows positioning at chosen points in the DHT.</p>
+
+<p>Because Sybil attacks amplify the power of many attacks against DHTs,
+making Sybil attacks as difficult as possible is the basis for resilient DHT operation.
+The typical abstract mitigation approach is binding node identities to physical network interfaces.
+To some extend, this can be achieved by introducing IP address based limits.
+Further, generating node IDs can be bound by proof of work (PoW),
+which, however, comes with a set of shortcomings, e.g. relatively high costs on resource restricted devices.
+<a href="https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5-rationale.md#sybil-and-eclipse-attacks">The discv5 doc</a>
+describes both Sybil and eclipse attacks, as well as concrete mitigation techniques employed by discv5.</p>
+
+<p><em>Eclipse Attack</em></p>
+
+<p>In an eclipse attack, nodes controlled by the attacker poison the routing tables of other nodes in a way that parts of the DHT become eclipsed, i.e. invisible.
+When a controlled node is asked for the next step in a path,
+it provides another controlled node as the next step,
+effectively navigating the querying node around or away from certain areas of the DHT.
+While several mitigation techniques have been researched, there is no definitive protection against eclipse attacks available as of yet.
+One mitigation technique is increasing $\alpha$, the number of parallel queries, and following each concurrent path independently for the lookup.</p>
+
+<p>The eclipse attack becomes very powerful in combination with a successful Sybil attack;
+especially when the attacker can freely choose the position of the Sybil nodes.</p>
+
+<p>The aforementioned new topic discovery of discv5 provides a good balance between protection against eclipse attacks and query performance.</p>
+
+<h2 id="peer-exchange-protocol">Peer Exchange Protocol</h2>
+
+<p>While discv5 based ambient peer discovery has many desirable properties, resource restricted nodes and nodes behind restrictive NAT setups cannot run discv5 satisfactory.
+With these nodes in mind, we started working on a simple <em>peer exchange protocol</em> based on ideas proposed <a href="https://github.com/libp2p/specs/issues/222">here</a>.
+The peer exchange protocol will allow nodes to ask peers for additional peers.
+Similar to discv5, the peer exchange protocol will also support capability discovery.</p>
+
+<p>The new peer exchange protocol can be seen as a simple replacement for the <a href="https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/rendezvous/README.md">Rendezvous protocol</a>, which Waku v2 does not support.
+While the rendezvous protocol involves nodes registering at rendezvous peers, the peer exchange protocol simply allows nodes to ask any peer for a list of peers (with a certain set of capabilities).
+Rendezvous tends to introduce centralized elements as rendezvous peers have a super-peer role.</p>
+
+<p>In the future, we will investigate resource usage of <a href="https://rfc.vac.dev/spec/33/">Waku v2 discv5</a> and provide suggestions for minimal resources nodes should have to run discv5 satisfactory.</p>
+
+<h2 id="further-protocols-related-to-discovery">Further Protocols Related to Discovery</h2>
+
+<p>Waku v2 comprises further protocols related to ambient peer discovery. We shortly mention them for context, even though they are not strictly ambient peer discovery protocols.</p>
+
+<h3 id="gossipsub-peer-exchange-protocol">Gossipsub Peer Exchange Protocol</h3>
+
+<p>Gossipsub provides an integrated <a href="https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/gossipsub-v1.1.md#prune-backoff-and-peer-exchange">peer exchange</a> mechanism which is also supported by Waku v2.
+Gossipsub peer exchange works in a <em>push</em> manner. Nodes send peer lists to peers they prune from the active mesh.
+This pruning is part of the gossipsub peer management, blurring the boundaries of <em>peer management</em> and <em>ambient peer discovery</em>.</p>
+
+<p>We will investigate anonymity implications of this protocol and might disable it in favour of more anonymity-preserving protocols.
+Sending a list of peers discloses information about the sending node.
+We consider restricting these peer lists to cached peers that are currently not used in the active gossipsub mesh.</p>
+
+<h3 id="capability-negotiation">Capability Negotiation</h3>
+
+<p>Some of the ambient peer discovery methods used by Waku2 will support capability discovery.
+This allows to narrow down the set of retrieved peers to peers that support specific capabilities.
+This is efficient because it avoids establishing connections to nodes that we are not interested in.</p>
+
+<p>However, the ambient discovery interface does not require capability discovery, which will lead to nodes having peers with unknown capabilities in their peer lists.
+We work on a <em>capability negotiation protocol</em> which allows nodes to ask peers</p>
+
+<ul>
+  <li>for their complete list of capabilities, and</li>
+  <li>whether they support a specific capability</li>
+</ul>
+
+<p>We will investigate security implications, especially when sending full capability lists.</p>
+
+<h2 id="nat-traversal">NAT traversal</h2>
+
+<p>For <a href="https://docs.libp2p.io/concepts/nat/">NAT traversal</a>, Waku v2 currently supports the port mapping protocols <a href="https://en.wikipedia.org/wiki/Universal_Plug_and_Play">UPnP</a> and <a href="https://datatracker.ietf.org/doc/html/rfc6886">NAT-PMP</a> / <a href="https://datatracker.ietf.org/doc/html/rfc6887">PCP</a>.</p>
+
+<p>In the future, we plan to add support for parts of <a href="https://datatracker.ietf.org/doc/html/rfc8445">ICE</a>, e.g. <a href="https://datatracker.ietf.org/doc/html/rfc7350">STUN</a>.
+We do not plan to support <a href="https://www.rfc-editor.org/rfc/rfc5928">TURN</a> because TURN relays would introduce a centralized element.
+A modified decentralized version of TURN featuring incentivization might be an option in the future;
+strong peers could offer a relay service similar to TURN.</p>
+
+<p>There are <a href="https://github.com/ethereum/devp2p/issues/199">plans to integrate more NAT traversal into discv5</a>, in which we might participate.
+So far, the only traversal technique supported by discv5 is nodes receiving their external IP address in pong messages.</p>
+
+<p>While NAT traversal is very important, adding more NAT traversal techniques is not a priority at the moment.
+Nodes behind restrictive symmetric NAT setups cannot be discovered, but they can still discover peers in less restrictive setups.
+While we wish to have as many nodes as possible to be discoverable via ambient peer discovery, two nodes behind a restrictive symmetric NAT can still exchange Waku v2 messages if they discovered a shared peer.
+This is one of the nice resilience related properties of flooding based routing algorithms.</p>
+
+<p>For mobile nodes, which suffer from changing IP addresses and double NAT setups, we plan using the peer exchange protocol to ask peers for more peers.
+Besides saving resources on resource restricted devices, this approach works as long as peers are in less restrictive environments.</p>
+
+<h2 id="conclusion-and-future-prospects">Conclusion and Future Prospects</h2>
+
+<p><em>Ambient peer discovery</em> is an integral part of decentralized applications. It allows nodes to learn about peers in the network.
+As of yet, Waku v2 supports DNS-based discovery and a slightly modified version of discv5.
+We are working on further protocols, including a peer exchange protocol that allows resource restricted nodes to ask stronger peers for peer lists.
+Further, we are working on adding capability discovery to our ambient discovery protocols, allowing nodes to find peers with desired properties.</p>
+
+<p>These protocols can be combined in a modular way and allow Waku v2 nodes to build a strong and resilient mesh network,
+even if some discovery methods are not available in a given situation.</p>
+
+<p>We will investigate security properties of these discovery mechanisms with a focus on privacy and anonymity in a future post on this research log.
+As an outlook we can already state that DHT approaches typically allow inferring information about the querying node.
+Further, sending peer lists allows inferring the position of a node within the mesh, and by extension information about the node.
+Waku v2 already provides some mitigation, because the mesh for transmitting actual messages, and the peer discovery network are separate.
+To mitigate information leakage by transmitting peer lists, we plan to only reply with lists of peers that nodes do not use in their active meshes.</p>
+
+<hr />
+
+<h2 id="references">References</h2>
+
+<ul>
+  <li><a href="https://rfc.vac.dev/spec/10/">Waku v2</a></li>
+  <li><a href="https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/README.md">libp2p gossipsub</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Peer-to-peer#Unstructured_networks">unstructured P2P network</a></li>
+  <li><a href="https://docs.libp2p.io/concepts/publish-subscribe/#discovery">ambient peer discovery</a></li>
+  <li><a href="https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5.md">Discovery v5</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Kademlia">Kademlia</a></li>
+  <li><a href="https://vac.dev/kademlia-to-discv5">Discv5 history</a></li>
+  <li><a href="https://vac.dev/feasibility-discv5">Discv5 Waku v2 feasibility study</a></li>
+  <li><a href="https://vac.dev/dns-based-discovery">DNS-based discovery</a></li>
+  <li><a href="https://eips.ethereum.org/EIPS/eip-1459">EIP-1459</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Merkle_tree">Merkle trees</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Sybil_attack">Sybil attack</a></li>
+  <li><a href="https://www.usenix.org/conference/usenixsecurity15/technical-sessions/presentation/heilman">eclipse attack</a></li>
+  <li><a href="https://rfc.vac.dev/spec/31/">Waku v2 ENR</a></li>
+  <li><a href="https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5-theory.md#ad-placement-and-topic-radius">Discv5 topic discovery</a></li>
+  <li><a href="https://github.com/harnen/service-discovery-paper">Discv5 paper</a></li>
+  <li><a href="https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5-rationale.md#sybil-and-eclipse-attacks">Discv5 vs Sybil and eclipse attacks</a></li>
+  <li><a href="https://github.com/libp2p/specs/issues/222">peer exchange idea</a></li>
+  <li><a href="https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/rendezvous/README.md">Rendezvous protocol</a></li>
+  <li><a href="https://rfc.vac.dev/spec/33/">Waku v2 discv5</a></li>
+  <li><a href="https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/gossipsub-v1.1.md#prune-backoff-and-peer-exchange">Gossipsub peer exchange</a></li>
+  <li><a href="https://docs.libp2p.io/concepts/nat/">NAT traversal</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Universal_Plug_and_Play">UPnP</a></li>
+  <li><a href="https://datatracker.ietf.org/doc/html/rfc6886">NAT-PMP</a></li>
+  <li><a href="https://datatracker.ietf.org/doc/html/rfc6887">PCP</a>.</li>
+  <li><a href="https://github.com/ethereum/devp2p/issues/199">Discv5 topic efficiency issue</a></li>
+</ul>
+
+</div>
+  </div>
+</section>
+</main>
+    </div>
+    <footer class="footer bg-black flex flex-shrink-0 justify-center">
+  <div class="container max-w-screen-xl flex sl:justify-between lm:justify-start p-5 md:px-12 md:pt-5 lg:py-10">
+    <div class="logo mr-10 sm:mr-0 sm:w-2/12 lg:w-3/12">
+      <a href="/"><img src="/assets/img/logo.png" alt="Vac logo" class="w-9 h-11" /></a>
+    </div>
+
+    <div class="flex flex-col xm:flex-row xm:justify-between sm:w-10/12 lg:w-9/12">
+      <p class="hidden sl:inline-block sl:mr-10 text-xxs lg:text-base text-white opacity-75">Vac researches peer-to-peer, private, censorship resistant communication</p>
+      <nav class="flex max-w-xs mr-0 xm:mr-5 l:mr-32 mb-5 sm:mb-0">
+        <div class="flex">
+          <div class="flex flex-col mr-5 sm:mr-10 sl:mr-14">
+            <p class="text-xxs lg:text-base text-white opacity-75 mb-5 lg:mb-8">Research</p>
+            <ul>
+               <li class="text-xxs lg:text-base text-white hover:opacity-50 mb-5">
+  <a href="/research-log" target="_blank" rel="noopener noreferrer">Log</a>
+</li>
+  <li class="text-xxs lg:text-base text-white hover:opacity-50 mb-5">
+  <a href="https://rfc.vac.dev/" target="_blank" rel="noopener noreferrer">Specs</a>
+</li>
+ 
+            </ul>
+          </div>
+          <div class="flex flex-col sl:mr-14">
+            <p class="text-xxs lg:text-base text-white opacity-75 mb-5 lg:mb-8">Socials</p>
+            <ul>
+               <li class="text-xxs lg:text-base text-white hover:opacity-50 mb-5">
+  <a href="https://twitter.com/vacp2p" target="_blank" rel="noopener noreferrer">Twitter</a>
+</li>
+  <li class="text-xxs lg:text-base text-white hover:opacity-50 mb-5">
+  <a href="https://discord.gg/PQFdubGt6d" target="_blank" rel="noopener noreferrer">Discord</a>
+</li>
+  <li class="text-xxs lg:text-base text-white hover:opacity-50 mb-5">
+  <a href="https://t.me/vacp2p" target="_blank" rel="noopener noreferrer">Telegram</a>
+</li>
+ 
+            </ul>
+          </div>
+        </div></nav></div>
+  </div>
+</footer>
+ <script src="/assets/js/main.min.js"></script>
+<script src="/assets/js/smooth-scroll.min.js"></script>
+
+  </body>
+</html>

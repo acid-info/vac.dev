@@ -1,4 +1,382 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://vac.dev/feed.xml" rel="self" type="application/atom+xml" /><link href="https://vac.dev/" rel="alternate" type="text/html" /><updated>2022-04-19T09:37:16+00:00</updated><id>https://vac.dev/feed.xml</id><title type="html">Vac</title><subtitle>Vac is a modular peer-to-peer messaging stack, with a focus on secure messaging.</subtitle><entry><title type="html">Introducing nwaku</title><link href="https://vac.dev/introducing-nwaku" rel="alternate" type="text/html" title="Introducing nwaku" /><published>2022-04-12T08:00:00+00:00</published><updated>2022-04-12T08:00:00+00:00</updated><id>https://vac.dev/introducing-nwaku</id><content type="html" xml:base="https://vac.dev/introducing-nwaku">&lt;h2 id=&quot;background&quot;&gt;Background&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://vac.dev/feed.xml" rel="self" type="application/atom+xml" /><link href="https://vac.dev/" rel="alternate" type="text/html" /><updated>2022-05-09T15:26:44+00:00</updated><id>https://vac.dev/feed.xml</id><title type="html">Vac</title><subtitle>Vac is a modular peer-to-peer messaging stack, with a focus on secure messaging.</subtitle><entry><title type="html">Waku v2 Ambient Peer Discovery</title><link href="https://vac.dev/wakuv2-apd" rel="alternate" type="text/html" title="Waku v2 Ambient Peer Discovery" /><published>2022-05-09T08:00:00+00:00</published><updated>2022-05-09T08:00:00+00:00</updated><id>https://vac.dev/ambient-peer-discovery</id><content type="html" xml:base="https://vac.dev/wakuv2-apd">&lt;script type=&quot;text/javascript&quot; src=&quot;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML&quot;&gt;
+&lt;/script&gt;
+
+&lt;script type=&quot;text/x-mathjax-config&quot;&gt;
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true},
+      jax: [&quot;input/TeX&quot;,&quot;input/MathML&quot;,&quot;input/AsciiMath&quot;,&quot;output/CommonHTML&quot;],
+      extensions: [&quot;tex2jax.js&quot;,&quot;mml2jax.js&quot;,&quot;asciimath2jax.js&quot;,&quot;MathMenu.js&quot;,&quot;MathZoom.js&quot;,&quot;AssistiveMML.js&quot;, &quot;[Contrib]/a11y/accessibility-menu.js&quot;],
+      TeX: {
+      extensions: [&quot;AMSmath.js&quot;,&quot;AMSsymbols.js&quot;,&quot;noErrors.js&quot;,&quot;noUndefined.js&quot;],
+      equationNumbers: {
+      autoNumber: &quot;AMS&quot;
+      }
+    }
+  });
+&lt;/script&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://rfc.vac.dev/spec/10/&quot;&gt;Waku v2&lt;/a&gt; comprises a set of modular protocols for secure, privacy preserving communication.
+Avoiding centralization, these protocols exchange messages over a P2P network layer.
+In order to build a P2P network, participating nodes first have to discover peers within this network.
+This is where &lt;a href=&quot;https://docs.libp2p.io/concepts/publish-subscribe/#discovery&quot;&gt;&lt;em&gt;ambient peer discovery&lt;/em&gt;&lt;/a&gt; comes into play:
+it allows nodes to find peers, making it an integral part of any decentralized application.&lt;/p&gt;
+
+&lt;p&gt;In this post the term &lt;em&gt;node&lt;/em&gt; to refers to &lt;em&gt;our&lt;/em&gt; endpoint or the endpoint that takes action,
+while the term &lt;em&gt;peer&lt;/em&gt; refers to other endpoints in the P2P network.
+These endpoints can be any device connected to the Internet: e.g. servers, PCs, notebooks, mobile devices, or applications like a browser.
+As such, nodes and peers are the same. We use these terms for the ease of explanation without loss of generality.&lt;/p&gt;
+
+&lt;p&gt;In Waku’s modular design, ambient peer discovery is an umbrella term for mechanisms that allow nodes to find peers.
+Various ambient peer discovery mechanisms are supported, and each is specified as a separate protocol.
+Where do these protocols fit into Waku’s protocol stack?
+The P2P layer of Waku v2 builds on &lt;a href=&quot;https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/README.md&quot;&gt;libp2p gossipsub&lt;/a&gt;.
+Nodes participating in a gossipsub protocol manage a mesh network that is used for routing messages.
+This mesh network is an &lt;a href=&quot;https://en.wikipedia.org/wiki/Peer-to-peer#Unstructured_networks&quot;&gt;unstructured P2P network&lt;/a&gt;
+offering high robustness and resilience against attacks.
+Gossipsub implements many improvements overcoming the shortcomings typically associated with unstructured P2P networks, e.g. inefficient flooding based routing.
+The gossipsub mesh network is managed in a decentralized way, which requires each node to know other participating peers.
+Waku v2 may use any combination of its ambient discovery protocols to find appropriate peers.&lt;/p&gt;
+
+&lt;p&gt;Summarizing, Waku v2 comprises a &lt;em&gt;peer management layer&lt;/em&gt; based on libp2p gossipsub,
+which manages the peers of nodes, and an &lt;em&gt;ambient peer discovery layer&lt;/em&gt;,
+which provides information about peers to the peer management layer.&lt;/p&gt;
+
+&lt;p&gt;We focus on ambient peer discovery methods that are in line with our goal of building a fully decentralized, generalized, privacy-preserving and censorship-resistant messaging protocol.
+Some of these protocols still need adjustments to adhere to our privacy and anonymity requirements. For now, we focus on operational stability and feasibility.
+However, when choosing techniques, we pay attention to selecting mechanisms that can feasibly be tweaked for privacy in future research efforts.
+Because of the modular design and the fact that Waku v2 has several discovery methods at its disposal, we could even remove a protocol in case future evaluation deems it not fitting our standards.&lt;/p&gt;
+
+&lt;p&gt;This post covers the current state and future considerations of ambient peer discovery for Waku v2,
+and gives reason for changes and modifications we made or plan to make.
+The ambient peer discovery protocols currently supported by Waku v2 are a modified version of Ethereum’s &lt;a href=&quot;https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5.md&quot;&gt;Discovery v5&lt;/a&gt;
+and &lt;a href=&quot;https://vac.dev/dns-based-discovery&quot;&gt;DNS-based discovery&lt;/a&gt;.
+Waku v2 further supports &lt;a href=&quot;https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/gossipsub-v1.1.md#prune-backoff-and-peer-exchange&quot;&gt;gossipsub’s peer exchange protocol&lt;/a&gt;.
+In addition, we plan to introduce protocols for general peer exchange and capability discovery, respectively.
+The former allows resource restricted nodes to outsource querying for peers to stronger peers,
+the latter allows querying peers for their supported capabilities.
+Besides these new protocols, we are working on integrating capability discovery in our existing ambient peer discovery protocols.&lt;/p&gt;
+
+&lt;h2 id=&quot;static-node-lists&quot;&gt;Static Node Lists&lt;/h2&gt;
+
+&lt;p&gt;The simplest method of learning about peers in a P2P network is via static node lists.
+These can be given to nodes as start-up parameters or listed in a config-file.
+They can also be provided in a script-parseable format, e.g. in JSON.
+While this method of providing bootstrap nodes is very easy to implement, it requires static peers, which introduce centralized elements.
+Also, updating static peer information introduces significant administrative overhead:
+code and/or config files have to be updated and released.
+Typically, static node lists only hold a small number of bootstrap nodes, which may lead to high load on these nodes.&lt;/p&gt;
+
+&lt;h2 id=&quot;dns-based-discovery&quot;&gt;DNS-based Discovery&lt;/h2&gt;
+
+&lt;p&gt;Compared to static node lists,
+&lt;a href=&quot;https://vac.dev/dns-based-discovery&quot;&gt;DNS-based discovery&lt;/a&gt; (specified in &lt;a href=&quot;https://eips.ethereum.org/EIPS/eip-1459&quot;&gt;EIP-1459&lt;/a&gt;)
+provides a more dynamic way of discovering bootstrap nodes.
+It is very efficient, can easily be handled by resource restricted devices and provides very good availability.
+In addition to a naive DNS approach, Ethereum’s DNS-based discovery introduces efficient authentication leveraging &lt;a href=&quot;https://en.wikipedia.org/wiki/Merkle_tree&quot;&gt;Merkle trees&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;A further advantage over static node lists is the separation of code/release management and bootstrap node management.
+However, changing and updating the list of bootstrap nodes still requires administrative privileges because DNS records have to be added or updated.&lt;/p&gt;
+
+&lt;p&gt;While this method of discovery still requires centralized elements,
+node list management can be delegated to various DNS zones managed by other entities mitigating centralization.&lt;/p&gt;
+
+&lt;h2 id=&quot;discovery-v5&quot;&gt;Discovery V5&lt;/h2&gt;
+
+&lt;p&gt;A much more dynamic method of ambient peer discovery is &lt;a href=&quot;https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5.md&quot;&gt;Discovery v5&lt;/a&gt;, which is Ethereum’s peer discovery protocol.
+It is based on the &lt;a href=&quot;https://en.wikipedia.org/wiki/Kademlia&quot;&gt;Kademlia&lt;/a&gt; distributed hashtable (DHT).
+An &lt;a href=&quot;https://vac.dev/kademlia-to-discv5&quot;&gt;introduction to discv5 and its history&lt;/a&gt;, and a &lt;a href=&quot;https://vac.dev/feasibility-discv5&quot;&gt;discv5 Waku v2 feasibility study&lt;/a&gt;
+can be found in previous posts on this research log.&lt;/p&gt;
+
+&lt;p&gt;We use Discovery v5 as an ambient peer discovery method for Waku v2 because it is decentralized, efficient, actively researched, and has web3 as its main application area.
+Discv5 also offers mitigation techniques for various attacks, which we cover later in this post.&lt;/p&gt;
+
+&lt;p&gt;Using a DHT (structured P2P network) as a means for ambient peer discovery, while using the gossipsub mesh network (unstructured P2P network) for transmitting actual messages,
+Waku v2 leverages advantages from both worlds.
+One of the main benefits of DHTs is offering a global view over participating nodes. 
+This, in turn, allows sampling random sets of nodes which is important for equally distributing load.
+Gossipsub, on the other hand, offers great robustness and resilience against attacks.
+Even if discv5 discovery should not work in advent of a DoS attack, Waku v2 can still operate switching to different discovery methods.&lt;/p&gt;
+
+&lt;p&gt;Discovery methods that use separate P2P networks still depend on bootstrapping,
+which Waku v2 does via parameters on start-up or via DNS-based discovery.
+This might raise the question of why such discovery methods are beneficial.
+The answer lies in the aforementioned global view of DHTs. Without discv5 and similar methods, the bootstrap nodes are used as part of the gossipsub mesh.
+This might put heavy load on these nodes and further, might open pathways to inference attacks.
+Discv5, on the other hand, uses the bootstrap nodes merely as an entry to the discovery network and can provide random sets of nodes (sampled from a global view)
+for bootstrapping or expanding the mesh.&lt;/p&gt;
+
+&lt;h3 id=&quot;dht-background&quot;&gt;DHT Background&lt;/h3&gt;
+
+&lt;p&gt;Distributed Hash Tables are a class of structured P2P overlay networks.
+A DHT can be seen as a distributed node set of which each node is responsible for a part of the hash space.
+In contrast to unstructured P2P networks, e.g. the mesh network maintained by gossipsub,
+DHTs have a global view over the node set and the hash space (assuming the participating nodes behave well).&lt;/p&gt;
+
+&lt;p&gt;DHTs are susceptible to various kinds of attacks, especially &lt;a href=&quot;https://en.wikipedia.org/wiki/Sybil_attack&quot;&gt;Sybil attacks&lt;/a&gt;
+and &lt;a href=&quot;https://www.usenix.org/conference/usenixsecurity15/technical-sessions/presentation/heilman&quot;&gt;eclipse attacks&lt;/a&gt;.
+While security aspects have been addressed in various research papers, general practical solutions are not available.
+However, discv5 introduced various practical mitigation techniques.&lt;/p&gt;
+
+&lt;h3 id=&quot;random-walk-discovery&quot;&gt;Random Walk Discovery&lt;/h3&gt;
+
+&lt;p&gt;While discv5 is based on the Kademlia DHT, it only uses the &lt;em&gt;distributed node set&lt;/em&gt; aspect of DHTs.
+It does not map values (items) into the distributed hash space.
+This makes sense, because the main purpose of discv5 is discovering other nodes that support discv5, which are expected to be Ethereum nodes.
+Ethereum nodes that want to discover other Ethereum nodes simply query the discv5 network for a random set of peers.
+If Waku v2 would do the same, only a small subset of the retrieved nodes would support Waku v2.&lt;/p&gt;
+
+&lt;p&gt;A first naive solution for Waku v2 discv5 discovery is&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;retrieve a random node set, which is achieved by querying for a set of randomly chosen node IDs&lt;/li&gt;
+  &lt;li&gt;filter the returned nodes on the query path based on Waku v2 capability via the &lt;a href=&quot;https://rfc.vac.dev/spec/31/&quot;&gt;Waku v2 ENR&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;repeat until enough Waku v2 capable nodes are found&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This query process boils down to random walk discovery, which is very resilient against attacks, but also very inefficient if the number of nodes supporting the desired capability is small.
+We refer to this as the needle-in-the-haystack problem.&lt;/p&gt;
+
+&lt;h3 id=&quot;random-walk-performance-estimation&quot;&gt;Random Walk Performance Estimation&lt;/h3&gt;
+
+&lt;p&gt;This subsection provides a rough estimation of the overhead introduced by random walk discovery.&lt;/p&gt;
+
+&lt;p&gt;Given the following parameters:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;$n$ number of total nodes participating in discv5&lt;/li&gt;
+  &lt;li&gt;$p$ percentage of nodes supporting Waku&lt;/li&gt;
+  &lt;li&gt;$W$ the event of having at least one Waku node in a random sample&lt;/li&gt;
+  &lt;li&gt;$k$ the size of a random sample (default = 16)&lt;/li&gt;
+  &lt;li&gt;$\alpha$ the number of parallel queries started&lt;/li&gt;
+  &lt;li&gt;$b$ bits per hop&lt;/li&gt;
+  &lt;li&gt;$q$ the number of queries&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A query takes $log_{2^b}n$ hops to retrieve a random sample of nodes.&lt;/p&gt;
+
+&lt;p&gt;$P(W) = 1 - (1-p/100)^k$ is the probability of having at least one Waku node in the sample.&lt;/p&gt;
+
+&lt;p&gt;$P(W^q) = 1 - (1-p/100)^{kq}$  is the probability of having at least one Waku node in the union of $q$ samples.&lt;/p&gt;
+
+&lt;p&gt;Expressing this in terms of $q$, we can write:
+\(P(W^q) = 1 - (1-p/100)^{kq} \iff  q = log_{(1-p/100)^k}(1-P(W^q))\)&lt;/p&gt;
+
+&lt;p&gt;Figure 1 shows a log-log plot for $P(W^q) = 90\%$.&lt;/p&gt;
+
+&lt;p align=&quot;center&quot;&gt;
+    &lt;img src=&quot;../assets/img/waku_v2_discv5_random_walk_estimation.svg&quot; width=&quot;75%&quot; /&gt;
+    &lt;br /&gt;
+    Figure 1: log-log plot showing the number of queries necessary to retrieve a Waku v2 node with a probability of 90% in relation to the Waku v2 node concentration in the network.
+&lt;/p&gt;
+
+&lt;p&gt;Assuming $p=0.1$, we would need&lt;/p&gt;
+
+\[0.9 = 1 - (1-0.1/100)^{16q} =&amp;gt; q \approx 144\]
+
+&lt;p&gt;queries to get a Waku node with 90% probability, which leads to $\approx 144 * 18 = 2592$ overlay hops.
+Choosing $b=3$ would reduce the number to $\approx 144 * 6 = 864$.
+Even when choosing $\alpha = 10$ we would have to wait at least 80 RTTs.
+This effort is just for retrieving a single Waku node. Ideally, we want at least 3 Waku nodes for bootstrapping a Waku relay.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5-theory.md#ad-placement-and-topic-radius&quot;&gt;The discv5 doc&lt;/a&gt; roughly estimates $p=1%$ to be the threshold for acceptably efficient random walk discovery. 
+This is in line with our estimation:&lt;/p&gt;
+
+\[0.9 = 1 - (1-1/100)^{16q} =&amp;gt; q \approx 14\]
+
+&lt;p&gt;The number of necessary queries is linearly dependent on the percentage $p$ of Waku nodes.
+The number of hops per query is logarithmically dependent on $n$.
+Thus, random walk searching is inefficient for small percentages $p$.
+Still, random walks are more resilient against attacks.&lt;/p&gt;
+
+&lt;p&gt;We can conclude that a Waku node concentration below 1% renders vanilla discv5 unfit for our needs.
+Our current solution and future plans for solving this issue are covered in the next subsections.&lt;/p&gt;
+
+&lt;h3 id=&quot;simple-solution-separate-discovery-network&quot;&gt;Simple Solution: Separate Discovery Network&lt;/h3&gt;
+
+&lt;p&gt;The simple solution we currently use for &lt;a href=&quot;https://rfc.vac.dev/spec/33/&quot;&gt;Waku v2 discv5&lt;/a&gt; is a separate discv5 network.
+All (well behaving) nodes in this network support Waku v2, resulting in a very high query efficiency.
+However, this solution reduces resilience because the difficulty of attacking a DHT scales with the number of participating nodes.&lt;/p&gt;
+
+&lt;h3 id=&quot;discv5-topic-discovery&quot;&gt;Discv5 Topic Discovery&lt;/h3&gt;
+
+&lt;p&gt;We did not base our solution on the &lt;a href=&quot;https://github.com/ethereum/devp2p/blob/master/discv5/discv5-theory.md#topic-advertisement&quot;&gt;current version of discv5 topic discovery&lt;/a&gt;,
+because, similar to random walk discovery, it suffers from poor performance for relatively rare capabilities/topics.&lt;/p&gt;
+
+&lt;p&gt;However, there is &lt;a href=&quot;https://github.com/harnen/service-discovery-paper&quot;&gt;ongoing research&lt;/a&gt; in discv5 topic discovery which is close to ideas we explored when pondering efficient and resilient Waku discv5 solutions.
+We keep a close eye on this research, give feedback, and make suggestions, as we plan to switch to this version of topic discovery in the future.&lt;/p&gt;
+
+&lt;p&gt;In a nutshell, topic discovery will manage separate routing tables for each topic.
+These topic specific tables are initialized with nodes from the discv5 routing table.
+While the buckets of the discv5 routing table represent distance intervals from the node’s &lt;code class=&quot;highlighter-rouge&quot;&gt;node ID&lt;/code&gt;, the topic table buckets represent distance intervals from &lt;code class=&quot;highlighter-rouge&quot;&gt;topic ID&lt;/code&gt;s.&lt;/p&gt;
+
+&lt;p&gt;Nodes that want to register a topic try to register that topic at one random peer per bucket.
+This leads to registering the topic at peers in closer and closer neighbourhoods around the topic ID, which
+yields a very efficient and resilient compromise between random walk discovery and DHT discovery.
+Peers in larger neighbourhoods around the topic ID are less efficient to discover, however more resilient against eclipse attacks and vice versa.&lt;/p&gt;
+
+&lt;p&gt;Further, this works well with the overload and DoS protection discv5 employs.
+Discv5 limits the amount of nodes registered per topic on a single peer. Further, discv5 enforces a waiting time before nodes can register topics at peers.
+So, for popular topics, a node might fail to register the topic in a close neighbourhood.
+However, because the topic is popular (has a high occurrence percentage $p$), it can still be efficiently discovered.&lt;/p&gt;
+
+&lt;p&gt;In the future, we also plan to integrate Waku v2 capability discovery, which will not only allow asking for nodes that support Waku v2,
+but asking for Waku v2 nodes supporting specific Waku v2 protocols like filter or store.
+For the store protocol we envision sub-capabilities reflecting message topics and time frames of messages.
+We will also investigate related security implications.&lt;/p&gt;
+
+&lt;h3 id=&quot;attacks-on-dhts&quot;&gt;Attacks on DHTs&lt;/h3&gt;
+
+&lt;p&gt;In this post, we only briefly describe common attacks on DHTs.
+These attacks are mainly used for denial of service (DoS),
+but can also used as parts of more sophisticated attacks, e.g. deanonymization attacks.
+A future post on this research log will cover security aspects of ambient peer discovery with a focus on privacy and anonymity.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Sybil Attack&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;The power of an attacker in a DHT is proportional to the number of controlled nodes.
+Controlling nodes comes at a high resource cost and/or requires controlling a botnet via a preliminary attack.&lt;/p&gt;
+
+&lt;p&gt;In a Sybil attack, an attacker generates lots of virtual node identities.
+This allows the attacker to control a large portion of the ID space in a DHT at a relatively low cost.
+Sybil attacks are especially powerful when the attacker can freely choose the IDs of generated nodes,
+because this allows positioning at chosen points in the DHT.&lt;/p&gt;
+
+&lt;p&gt;Because Sybil attacks amplify the power of many attacks against DHTs,
+making Sybil attacks as difficult as possible is the basis for resilient DHT operation.
+The typical abstract mitigation approach is binding node identities to physical network interfaces.
+To some extend, this can be achieved by introducing IP address based limits.
+Further, generating node IDs can be bound by proof of work (PoW),
+which, however, comes with a set of shortcomings, e.g. relatively high costs on resource restricted devices.
+&lt;a href=&quot;https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5-rationale.md#sybil-and-eclipse-attacks&quot;&gt;The discv5 doc&lt;/a&gt;
+describes both Sybil and eclipse attacks, as well as concrete mitigation techniques employed by discv5.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Eclipse Attack&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;In an eclipse attack, nodes controlled by the attacker poison the routing tables of other nodes in a way that parts of the DHT become eclipsed, i.e. invisible.
+When a controlled node is asked for the next step in a path,
+it provides another controlled node as the next step,
+effectively navigating the querying node around or away from certain areas of the DHT.
+While several mitigation techniques have been researched, there is no definitive protection against eclipse attacks available as of yet.
+One mitigation technique is increasing $\alpha$, the number of parallel queries, and following each concurrent path independently for the lookup.&lt;/p&gt;
+
+&lt;p&gt;The eclipse attack becomes very powerful in combination with a successful Sybil attack;
+especially when the attacker can freely choose the position of the Sybil nodes.&lt;/p&gt;
+
+&lt;p&gt;The aforementioned new topic discovery of discv5 provides a good balance between protection against eclipse attacks and query performance.&lt;/p&gt;
+
+&lt;h2 id=&quot;peer-exchange-protocol&quot;&gt;Peer Exchange Protocol&lt;/h2&gt;
+
+&lt;p&gt;While discv5 based ambient peer discovery has many desirable properties, resource restricted nodes and nodes behind restrictive NAT setups cannot run discv5 satisfactory.
+With these nodes in mind, we started working on a simple &lt;em&gt;peer exchange protocol&lt;/em&gt; based on ideas proposed &lt;a href=&quot;https://github.com/libp2p/specs/issues/222&quot;&gt;here&lt;/a&gt;.
+The peer exchange protocol will allow nodes to ask peers for additional peers.
+Similar to discv5, the peer exchange protocol will also support capability discovery.&lt;/p&gt;
+
+&lt;p&gt;The new peer exchange protocol can be seen as a simple replacement for the &lt;a href=&quot;https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/rendezvous/README.md&quot;&gt;Rendezvous protocol&lt;/a&gt;, which Waku v2 does not support.
+While the rendezvous protocol involves nodes registering at rendezvous peers, the peer exchange protocol simply allows nodes to ask any peer for a list of peers (with a certain set of capabilities).
+Rendezvous tends to introduce centralized elements as rendezvous peers have a super-peer role.&lt;/p&gt;
+
+&lt;p&gt;In the future, we will investigate resource usage of &lt;a href=&quot;https://rfc.vac.dev/spec/33/&quot;&gt;Waku v2 discv5&lt;/a&gt; and provide suggestions for minimal resources nodes should have to run discv5 satisfactory.&lt;/p&gt;
+
+&lt;h2 id=&quot;further-protocols-related-to-discovery&quot;&gt;Further Protocols Related to Discovery&lt;/h2&gt;
+
+&lt;p&gt;Waku v2 comprises further protocols related to ambient peer discovery. We shortly mention them for context, even though they are not strictly ambient peer discovery protocols.&lt;/p&gt;
+
+&lt;h3 id=&quot;gossipsub-peer-exchange-protocol&quot;&gt;Gossipsub Peer Exchange Protocol&lt;/h3&gt;
+
+&lt;p&gt;Gossipsub provides an integrated &lt;a href=&quot;https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/gossipsub-v1.1.md#prune-backoff-and-peer-exchange&quot;&gt;peer exchange&lt;/a&gt; mechanism which is also supported by Waku v2.
+Gossipsub peer exchange works in a &lt;em&gt;push&lt;/em&gt; manner. Nodes send peer lists to peers they prune from the active mesh.
+This pruning is part of the gossipsub peer management, blurring the boundaries of &lt;em&gt;peer management&lt;/em&gt; and &lt;em&gt;ambient peer discovery&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;We will investigate anonymity implications of this protocol and might disable it in favour of more anonymity-preserving protocols.
+Sending a list of peers discloses information about the sending node.
+We consider restricting these peer lists to cached peers that are currently not used in the active gossipsub mesh.&lt;/p&gt;
+
+&lt;h3 id=&quot;capability-negotiation&quot;&gt;Capability Negotiation&lt;/h3&gt;
+
+&lt;p&gt;Some of the ambient peer discovery methods used by Waku2 will support capability discovery.
+This allows to narrow down the set of retrieved peers to peers that support specific capabilities.
+This is efficient because it avoids establishing connections to nodes that we are not interested in.&lt;/p&gt;
+
+&lt;p&gt;However, the ambient discovery interface does not require capability discovery, which will lead to nodes having peers with unknown capabilities in their peer lists.
+We work on a &lt;em&gt;capability negotiation protocol&lt;/em&gt; which allows nodes to ask peers&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;for their complete list of capabilities, and&lt;/li&gt;
+  &lt;li&gt;whether they support a specific capability&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We will investigate security implications, especially when sending full capability lists.&lt;/p&gt;
+
+&lt;h2 id=&quot;nat-traversal&quot;&gt;NAT traversal&lt;/h2&gt;
+
+&lt;p&gt;For &lt;a href=&quot;https://docs.libp2p.io/concepts/nat/&quot;&gt;NAT traversal&lt;/a&gt;, Waku v2 currently supports the port mapping protocols &lt;a href=&quot;https://en.wikipedia.org/wiki/Universal_Plug_and_Play&quot;&gt;UPnP&lt;/a&gt; and &lt;a href=&quot;https://datatracker.ietf.org/doc/html/rfc6886&quot;&gt;NAT-PMP&lt;/a&gt; / &lt;a href=&quot;https://datatracker.ietf.org/doc/html/rfc6887&quot;&gt;PCP&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In the future, we plan to add support for parts of &lt;a href=&quot;https://datatracker.ietf.org/doc/html/rfc8445&quot;&gt;ICE&lt;/a&gt;, e.g. &lt;a href=&quot;https://datatracker.ietf.org/doc/html/rfc7350&quot;&gt;STUN&lt;/a&gt;.
+We do not plan to support &lt;a href=&quot;https://www.rfc-editor.org/rfc/rfc5928&quot;&gt;TURN&lt;/a&gt; because TURN relays would introduce a centralized element.
+A modified decentralized version of TURN featuring incentivization might be an option in the future;
+strong peers could offer a relay service similar to TURN.&lt;/p&gt;
+
+&lt;p&gt;There are &lt;a href=&quot;https://github.com/ethereum/devp2p/issues/199&quot;&gt;plans to integrate more NAT traversal into discv5&lt;/a&gt;, in which we might participate.
+So far, the only traversal technique supported by discv5 is nodes receiving their external IP address in pong messages.&lt;/p&gt;
+
+&lt;p&gt;While NAT traversal is very important, adding more NAT traversal techniques is not a priority at the moment.
+Nodes behind restrictive symmetric NAT setups cannot be discovered, but they can still discover peers in less restrictive setups.
+While we wish to have as many nodes as possible to be discoverable via ambient peer discovery, two nodes behind a restrictive symmetric NAT can still exchange Waku v2 messages if they discovered a shared peer.
+This is one of the nice resilience related properties of flooding based routing algorithms.&lt;/p&gt;
+
+&lt;p&gt;For mobile nodes, which suffer from changing IP addresses and double NAT setups, we plan using the peer exchange protocol to ask peers for more peers.
+Besides saving resources on resource restricted devices, this approach works as long as peers are in less restrictive environments.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion-and-future-prospects&quot;&gt;Conclusion and Future Prospects&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Ambient peer discovery&lt;/em&gt; is an integral part of decentralized applications. It allows nodes to learn about peers in the network.
+As of yet, Waku v2 supports DNS-based discovery and a slightly modified version of discv5.
+We are working on further protocols, including a peer exchange protocol that allows resource restricted nodes to ask stronger peers for peer lists.
+Further, we are working on adding capability discovery to our ambient discovery protocols, allowing nodes to find peers with desired properties.&lt;/p&gt;
+
+&lt;p&gt;These protocols can be combined in a modular way and allow Waku v2 nodes to build a strong and resilient mesh network,
+even if some discovery methods are not available in a given situation.&lt;/p&gt;
+
+&lt;p&gt;We will investigate security properties of these discovery mechanisms with a focus on privacy and anonymity in a future post on this research log.
+As an outlook we can already state that DHT approaches typically allow inferring information about the querying node.
+Further, sending peer lists allows inferring the position of a node within the mesh, and by extension information about the node.
+Waku v2 already provides some mitigation, because the mesh for transmitting actual messages, and the peer discovery network are separate.
+To mitigate information leakage by transmitting peer lists, we plan to only reply with lists of peers that nodes do not use in their active meshes.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://rfc.vac.dev/spec/10/&quot;&gt;Waku v2&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/README.md&quot;&gt;libp2p gossipsub&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Peer-to-peer#Unstructured_networks&quot;&gt;unstructured P2P network&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.libp2p.io/concepts/publish-subscribe/#discovery&quot;&gt;ambient peer discovery&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5.md&quot;&gt;Discovery v5&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Kademlia&quot;&gt;Kademlia&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://vac.dev/kademlia-to-discv5&quot;&gt;Discv5 history&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://vac.dev/feasibility-discv5&quot;&gt;Discv5 Waku v2 feasibility study&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://vac.dev/dns-based-discovery&quot;&gt;DNS-based discovery&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://eips.ethereum.org/EIPS/eip-1459&quot;&gt;EIP-1459&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Merkle_tree&quot;&gt;Merkle trees&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Sybil_attack&quot;&gt;Sybil attack&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.usenix.org/conference/usenixsecurity15/technical-sessions/presentation/heilman&quot;&gt;eclipse attack&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://rfc.vac.dev/spec/31/&quot;&gt;Waku v2 ENR&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5-theory.md#ad-placement-and-topic-radius&quot;&gt;Discv5 topic discovery&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/harnen/service-discovery-paper&quot;&gt;Discv5 paper&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ethereum/devp2p/blob/6b0abc3d956a626c28dce1307ee9f546db17b6bd/discv5/discv5-rationale.md#sybil-and-eclipse-attacks&quot;&gt;Discv5 vs Sybil and eclipse attacks&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/libp2p/specs/issues/222&quot;&gt;peer exchange idea&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/rendezvous/README.md&quot;&gt;Rendezvous protocol&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://rfc.vac.dev/spec/33/&quot;&gt;Waku v2 discv5&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/libp2p/specs/blob/10712c55ab309086a52eec7d25f294df4fa96528/pubsub/gossipsub/gossipsub-v1.1.md#prune-backoff-and-peer-exchange&quot;&gt;Gossipsub peer exchange&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.libp2p.io/concepts/nat/&quot;&gt;NAT traversal&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Universal_Plug_and_Play&quot;&gt;UPnP&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://datatracker.ietf.org/doc/html/rfc6886&quot;&gt;NAT-PMP&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://datatracker.ietf.org/doc/html/rfc6887&quot;&gt;PCP&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ethereum/devp2p/issues/199&quot;&gt;Discv5 topic efficiency issue&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>kaiserd</name></author><category term="research" /><summary type="html"></summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://vac.dev/assets/img/waku_v2_discv5_random_walk_estimation.svg" /><media:content medium="image" url="https://vac.dev/assets/img/waku_v2_discv5_random_walk_estimation.svg" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Introducing nwaku</title><link href="https://vac.dev/introducing-nwaku" rel="alternate" type="text/html" title="Introducing nwaku" /><published>2022-04-12T08:00:00+00:00</published><updated>2022-04-12T08:00:00+00:00</updated><id>https://vac.dev/introducing-nwaku</id><content type="html" xml:base="https://vac.dev/introducing-nwaku">&lt;h2 id=&quot;background&quot;&gt;Background&lt;/h2&gt;
 
 &lt;p&gt;If you’ve been following our &lt;a href=&quot;https://vac.dev/research-log/&quot;&gt;research log&lt;/a&gt;,
 you’ll know that many things have happened in the world of Waku v2 since &lt;a href=&quot;/waku-v2-ethereum-coscup&quot;&gt;our last general update&lt;/a&gt;.
@@ -1913,80 +2291,4 @@ the primary bottleneck for full nodes, and the bottleneck is still bandwidth. To
   &lt;li&gt;We assume Core will, at some point, provide an UX for integrating payment of services.&lt;/li&gt;
   &lt;li&gt;We assume the desktop client is sufficiently usable.&lt;/li&gt;
   &lt;li&gt;We assume Core and Infra will investigate ways of improving MaxPeers.&lt;/li&gt;
-&lt;/ol&gt;</content><author><name>oskarth</name></author><category term="research" /><summary type="html">tldr: The Waku network is fragile and doesn’t scale. Here’s how to solve it.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://vac.dev/assets/img/status_scaling_model_fig4.png" /><media:content medium="image" url="https://vac.dev/assets/img/status_scaling_model_fig4.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">Feasibility Study: Discv5</title><link href="https://vac.dev/feasibility-discv5" rel="alternate" type="text/html" title="Feasibility Study: Discv5" /><published>2020-04-27T04:00:00+00:00</published><updated>2020-04-27T04:00:00+00:00</updated><id>https://vac.dev/feasibility-discv5</id><content type="html" xml:base="https://vac.dev/feasibility-discv5">&lt;blockquote&gt;
-  &lt;p&gt;Disclaimer: some of the numbers found in this write-up could be inaccurate. They are based on the current understanding of theoretical parts of the protocol itself by the author and are meant to provide a rough overview rather than bindable numbers.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This post serves as a more authoritative overview of the discv5 study, for a discussionary post providing more context make sure to check out the corresponding &lt;a href=&quot;https://discuss.status.im/t/discv5-feasibility-study/1632&quot;&gt;discuss post&lt;/a&gt;. Additionally, if you are unfamiliar with discv5, check out my previous write-up: &lt;a href=&quot;https://vac.dev/kademlia-to-discv5&quot;&gt;“From Kademlia to Discv5”&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;motivating-problem&quot;&gt;Motivating Problem&lt;/h2&gt;
-
-&lt;p&gt;The discovery method currently used by &lt;a href=&quot;https://status.im&quot;&gt;Status&lt;/a&gt;, is made up of various components and grew over time to solve a mix of problems. We want to simplify this while maintaining some of the properties we currently have.&lt;/p&gt;
-
-&lt;p&gt;Namely, we want to ensure censorship resistance to state-level adversaries. One of the issues Status had which caused us them add to their discovery method was the fact that addresses from providers like AWS and GCP were blocked both in Russia and China. Additionally, one of the main factors required is the ability to function on resource restricted devices.&lt;/p&gt;
-
-&lt;p&gt;Considering we are talking about resource restricted devices, let’s look at the implications and what we need to consider:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Battery consumption&lt;/strong&gt; - constant connections like websockets consume a lot of battery life.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;CPU usage&lt;/strong&gt; - certain discovery methods may be CPU incentive, slowing an app down and making it unusable.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Bandwidth consumption&lt;/strong&gt; - a lot of users will be using data plans, the discovery method needs to be efficient in order to accommodate those users without using up significant portions of their data plans.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Short connection windows&lt;/strong&gt; - the discovery algorithm needs to be low latency, that means it needs to return results fast. This is because many users will only have the app open for a short amount of time.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Not publicly connectable&lt;/strong&gt; - There is a good chance that most resource restricted devices are not publicly connectable.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For a node to be able to participate as both a provider, and a consumer in the discovery method. Meaning a node both reads from other nodes’ stored DHTs and hosts the DHT for other nodes to read from, it needs to be publically connectable. This means another node must be able to connect to some public IP of the given node.&lt;/p&gt;
-
-&lt;p&gt;With devices that are behind a NAT, this is easier said than done. Especially mobile devices, that when connected to 4G LTE networks are often stuck behind a symmetric NAT, drastically reducing the the succeess rate of NAT traversal. Keeping this in mind, it becomes obvious that most resource restricted devices will be consumers rather than providers due to this technical limitation.&lt;/p&gt;
-
-&lt;p&gt;In order to answer our questions, we formulated the problem with a simple method for testing. The “needle in a haystack” problem was formulated to figure out how easily a specific node can be found within a given network. This issue was fully formulated in &lt;a href=&quot;https://github.com/vacp2p/research/issues/15&quot;&gt;vacp2p/research#15&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
-
-&lt;p&gt;The main things we wanted to investigate was the overhead on finding a peer. This means we wanted to look at both the bandwidth, latency and effectiveness of this. There are 2 methods which we can use to find a peer:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;We can find a peer with a specific ID, using normal lookup methods as documented by Kademlia.&lt;/li&gt;
-  &lt;li&gt;We can find a peer that advertises a capability, this is possible using either capabilities advertised in the ENR or through &lt;a href=&quot;https://github.com/ethereum/devp2p/blob/master/discv5/discv5-theory.md#topic-advertisement&quot;&gt;topic tables&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;feasbility&quot;&gt;Feasbility&lt;/h2&gt;
-
-&lt;p&gt;To be able to investigate the feasibility of discv5, we used various methods including rough calculations which can be found in the &lt;a href=&quot;https://vac.dev/discv5-notebook/&quot;&gt;notebook&lt;/a&gt;, and a simulation isolated in &lt;a href=&quot;https://github.com/vacp2p/research/pull/19&quot;&gt;vacp2p/research#19&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;cpu--memory-usage&quot;&gt;CPU &amp;amp; Memory Usage&lt;/h3&gt;
-
-&lt;p&gt;The experimental discv5 has already been used within Status, however what was noticed was that the CPU and memory usage was rather high. It therefore should be investiaged if this is still the case, and if it is, it should be isolated where this stems from. Additionally it is worth looking at whether or not this is the case with both the go and nim implementation.&lt;/p&gt;
-
-&lt;p&gt;See details: &lt;a href=&quot;https://github.com/vacp2p/research/issues/31&quot;&gt;vacp2p/research#31&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;nat-on-cellular-data&quot;&gt;NAT on Cellular Data&lt;/h3&gt;
-
-&lt;p&gt;If a peer is not publically connectable it can not participate in the DHT both ways. A lot of mobile phones are behind symmetric NATs which UDP hole-punching close to impossible. It should be investigated whether or not mobile phones will be able to participate both ways and if there are good methods for doing hole-punching.&lt;/p&gt;
-
-&lt;p&gt;See details: &lt;a href=&quot;https://github.com/vacp2p/research/issues/29&quot;&gt;vacp2p/research#29&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;topic-tables&quot;&gt;Topic Tables&lt;/h3&gt;
-
-&lt;p&gt;Topic Tables allow us the ability to efficiently find nodes given a specific topic. However, they are not implemented in the &lt;a href=&quot;https://github.com/status-im/nim-eth/&quot;&gt;status-im/nim-eth&lt;/a&gt; implementation nor are they fully finalized in the spec. These are important if the network grows past a size where the concentration of specific nodes is relatively low making them hard to find.&lt;/p&gt;
-
-&lt;p&gt;See details: &lt;a href=&quot;https://github.com/vacp2p/research/issues/26&quot;&gt;vacp2p/research#26&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;finding-a-node&quot;&gt;Finding a node&lt;/h3&gt;
-
-&lt;p&gt;It is important to note, that given a network is relatively small sized, eg 100-500 nodes, then finding a node given a specific address is relatively managable. Additionally, if the concentration of a specific capability in a network is reasonable, then finding a node advertising its capabilities using an ENR rather than the topic table is also managable. A reasonable concentration for example would be 10%, which would give us an 80% chance of getting a node with that capability in the first lookup request. This can be explored more using our &lt;a href=&quot;https://vac.dev/discv5-notebook/#Needle-in-a-haystack-with-ENR-records-indicating-capabilities&quot;&gt;discv5 notebook&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;results&quot;&gt;Results&lt;/h2&gt;
-
-&lt;p&gt;Research has shown that finding a node in the DHT has a relatively low effect on bandwidth, both inbound and outbound. For example when trying to find a node in a network of 100 nodes, it would take roughly 5668 bytes total. Additionally if we assume 100ms latency per request it would range at ≈ 300ms latency, translating to 3 requests to find a specific node.&lt;/p&gt;
-
-&lt;h2 id=&quot;general-thoughts&quot;&gt;General Thoughts&lt;/h2&gt;
-
-&lt;p&gt;One of the main blockers right now is figuring out what the CPU and memory usage of discv5 is on mobile phones, this is a large blocker as it affects one of the core problems for us. We need to consider whether discv5 is an upgrade as it allows us to simplify our current discovery process or if it is too much of an overhead for resource restricted devices. The topic table feature could largely enhance discovery however it is not yet implemented. Given that CPU and memory isn’t too high, discv5 could probably be used as the other issues are more “features” than large scale issues. Implementing it would already reduce the ability for state level adversaries to censor our nodes.&lt;/p&gt;
-
-&lt;h2 id=&quot;acknowledgements&quot;&gt;Acknowledgements&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Oskar Thoren&lt;/li&gt;
-  &lt;li&gt;Dmitry Shmatko&lt;/li&gt;
-  &lt;li&gt;Kim De Mey&lt;/li&gt;
-  &lt;li&gt;Corey Petty&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>dean</name></author><category term="research" /><summary type="html">Disclaimer: some of the numbers found in this write-up could be inaccurate. They are based on the current understanding of theoretical parts of the protocol itself by the author and are meant to provide a rough overview rather than bindable numbers.</summary></entry></feed>
+&lt;/ol&gt;</content><author><name>oskarth</name></author><category term="research" /><summary type="html">tldr: The Waku network is fragile and doesn’t scale. Here’s how to solve it.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://vac.dev/assets/img/status_scaling_model_fig4.png" /><media:content medium="image" url="https://vac.dev/assets/img/status_scaling_model_fig4.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
