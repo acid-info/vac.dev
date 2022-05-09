@@ -1,6 +1,6 @@
 ---
 layout: author
-short_name: ksr
+short_name: kaiserd
 name: Daniel
 github: kaiserd
 ---
