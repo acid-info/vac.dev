@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://vac.dev/feed.xml" rel="self" type="application/atom+xml" /><link href="https://vac.dev/" rel="alternate" type="text/html" /><updated>2022-05-25T08:27:01+00:00</updated><id>https://vac.dev/feed.xml</id><title type="html">Vac</title><subtitle>Vac is a modular peer-to-peer messaging stack, with a focus on secure messaging.</subtitle><entry><title type="html">Noise handshakes as key-exchange mechanism for Waku</title><link href="https://vac.dev/wakuv2-noise" rel="alternate" type="text/html" title="Noise handshakes as key-exchange mechanism for Waku" /><published>2022-05-17T08:00:00+00:00</published><updated>2022-05-17T08:00:00+00:00</updated><id>https://vac.dev/noise</id><content type="html" xml:base="https://vac.dev/wakuv2-noise">&lt;script type=&quot;text/javascript&quot; src=&quot;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML&quot;&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.1">Jekyll</generator><link href="https://vac.dev/feed.xml" rel="self" type="application/atom+xml" /><link href="https://vac.dev/" rel="alternate" type="text/html" /><updated>2022-05-25T08:30:58+00:00</updated><id>https://vac.dev/feed.xml</id><title type="html">Vac</title><subtitle>Vac is a modular peer-to-peer messaging stack, with a focus on secure messaging.</subtitle><entry><title type="html">Noise handshakes as key-exchange mechanism for Waku</title><link href="https://vac.dev/wakuv2-noise" rel="alternate" type="text/html" title="Noise handshakes as key-exchange mechanism for Waku" /><published>2022-05-17T08:00:00+00:00</published><updated>2022-05-17T08:00:00+00:00</updated><id>https://vac.dev/noise</id><content type="html" xml:base="https://vac.dev/wakuv2-noise">&lt;script type=&quot;text/javascript&quot; src=&quot;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML&quot;&gt;
 &lt;/script&gt;
 
 &lt;script type=&quot;text/x-mathjax-config&quot;&gt;
@@ -56,9 +56,9 @@ Hence, proposing and implementing one or few key-agreements which provide certai
   &lt;li&gt;By commutativity of scalar multiplication, both Alice and Bob can now compute the point $P_{AB} = s_As_B\cdot P$, using the elliptic curve point received from the other party and their secret scalar.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;The assumed hardness of computing discrete logarithms in $E(\mathbb{F}&lt;em&gt;p)$, ensures that it is not possible to compute $s_A$ or $s_B$ from $P_A$ and $P_B$, respectively. Another security assumption (named &lt;a href=&quot;https://en.wikipedia.org/wiki/Computational_Diffie%E2%80%93Hellman_assumption&quot;&gt;Computational Diffie-Hellman assumption&lt;/a&gt;) ensures that it is not possible to compute $P&lt;/em&gt;{AB}$ from $P$, $P_A$ and $P_B$. Hence the point $P_{AB}$ shared by Alice and Bob at the end of the above protocol cannot be efficiently computed by an attacker intercepting $P_A$ and $P_B$, and can then be used to generate a secret to be later employed, for example, as a symmetric encryption key.&lt;/p&gt;
+&lt;p&gt;The assumed hardness of computing discrete logarithms in the elliptic curve, ensures that it is not possible to compute $s_A$ or $s_B$ from $P_A$ and $P_B$, respectively. Another security assumption (named &lt;a href=&quot;https://en.wikipedia.org/wiki/Computational_Diffie%E2%80%93Hellman_assumption&quot;&gt;Computational Diffie-Hellman assumption&lt;/a&gt;) ensures that it is not possible to compute $P_{AB}$ from $P$, $P_A$ and $P_B$. Hence the point $P_{AB}$ shared by Alice and Bob at the end of the above protocol cannot be efficiently computed by an attacker intercepting $P_A$ and $P_B$, and can then be used to generate a secret to be later employed, for example, as a symmetric encryption key.&lt;/p&gt;
 
-&lt;p&gt;On a side note, this protocol shows the interplay between two components typical to public-key based schemes: the scalars $s_A$ and $s_B$ can be seen as &lt;em&gt;private keys&lt;/em&gt; associated to the &lt;em&gt;public keys&lt;/em&gt; $P_A$ and $P_B$, respectively, which allow Alice and Bob only to compute the shared secret point $P_AB$.&lt;/p&gt;
+&lt;p&gt;On a side note, this protocol shows the interplay between two components typical to public-key based schemes: the scalars $s_A$ and $s_B$ can be seen as &lt;em&gt;private keys&lt;/em&gt; associated to the &lt;em&gt;public keys&lt;/em&gt; $P_A$ and $P_B$, respectively, which allow Alice and Bob only to compute the shared secret point $P_{AB}$.&lt;/p&gt;
 
 &lt;h2 id=&quot;ephemeral-and-static-public-keys&quot;&gt;Ephemeral and Static Public Keys&lt;/h2&gt;
 
@@ -91,11 +91,8 @@ Hence, proposing and implementing one or few key-agreements which provide certai
 &lt;p&gt;The Noise handshakes we support in Waku all provide the following security properties:&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Confidentiality&lt;/strong&gt;: the adversary should not be able to learn what data is being sent between Alice and Bob.
-    &lt;ul&gt;
-      &lt;li&gt;&lt;strong&gt;Strong forward secrecy&lt;/strong&gt;: an active adversary cannot decrypt messages nor infer any information on the employed encryption key, even in the case he has access to Alice’s and Bob’s long-term private keys (during or after their communication).&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Confidentiality&lt;/strong&gt;: the adversary should not be able to learn what data is being sent between Alice and Bob.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Strong forward secrecy&lt;/strong&gt;: an active adversary cannot decrypt messages nor infer any information on the employed encryption key, even in the case he has access to Alice’s and Bob’s long-term private keys (during or after their communication).&lt;/li&gt;
   &lt;li&gt;&lt;strong&gt;Authenticity&lt;/strong&gt;: the adversary should not be able to cause either Alice or Bob to accept messages coming from a party different than their original senders.&lt;/li&gt;
   &lt;li&gt;&lt;strong&gt;Integrity&lt;/strong&gt;: the adversary should not be able to cause Alice or Bob to accept data that has been tampered with.&lt;/li&gt;
   &lt;li&gt;&lt;strong&gt;Identity-hiding&lt;/strong&gt;: once a secure communication channel is established, a passive adversary should not be able to link exchanged encrypted messages to their corresponding sender and recipient by knowing their long-term static keys.&lt;/li&gt;
@@ -127,7 +124,6 @@ Hence, proposing and implementing one or few key-agreements which provide certai
 &lt;p&gt;At this point it should be clear how such notation is able to compactly represent a large variety of DH based key-agreements. Nevertheless, we can easily define additional tokens and processing rules in order to address specific applications and security requirements, such as the &lt;a href=&quot;http://www.noiseprotocol.org/noise.html#handshake-tokens&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;psk&lt;/code&gt;&lt;/a&gt; token used to process arbitrary pre-shared key material.&lt;/p&gt;
 
 &lt;p&gt;As an example of Noise flexibility, the custom protocol we detailed &lt;a href=&quot;#Ephemeral-and-Static-Public-Keys&quot;&gt;above&lt;/a&gt; can be shortly represented as &lt;em&gt;(Alice is on the left)&lt;/em&gt;:&lt;/p&gt;
-
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;-&amp;gt; e
 &amp;lt;- e, ee, s
 -&amp;gt; s, ss
@@ -176,10 +172,9 @@ employed during the handshake.&lt;/p&gt;
 
 &lt;p&gt;For more details on supported handshakes and on how these are implemented in Waku, we refer to &lt;a href=&quot;https://rfc.vac.dev/spec/35/&quot;&gt;35/WAKU2-NOISE&lt;/a&gt; RFC.&lt;/p&gt;
 
-&lt;h3 id=&quot;the-k1k1-handshake&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;K1K1&lt;/code&gt; Handshake&lt;/h3&gt;
+&lt;h3 id=&quot;the-k1k1-handshake&quot;&gt;The K1K1 Handshake&lt;/h3&gt;
 
 &lt;p&gt;If Alice and Bob know each others’ static key (e.g., these are public or were already exchanged in a previous handshake) , they MAY execute a &lt;code class=&quot;highlighter-rouge&quot;&gt;K1K1&lt;/code&gt; handshake.  In Noise notation &lt;em&gt;(Alice is on the left)&lt;/em&gt; this can be sketched as:&lt;/p&gt;
-
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; K1K1:
     -&amp;gt;  s
     &amp;lt;-  s
@@ -188,17 +183,15 @@ employed during the handshake.&lt;/p&gt;
     &amp;lt;-  e, ee, es
     -&amp;gt;  se
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
 &lt;p&gt;We note that here only ephemeral keys are exchanged. This handshake is useful in case Alice needs to instantiate a new separate encrypted communication channel with Bob, e.g. opening multiple parallel connections, file transfers, etc.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Security considerations on identity-hiding (active attacker)&lt;/strong&gt;: no static key is transmitted, but an active attacker impersonating Alice can check candidates for Bob’s static key.&lt;/p&gt;
 
-&lt;h3 id=&quot;the-xk1-handshake&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;XK1&lt;/code&gt; Handshake&lt;/h3&gt;
+&lt;h3 id=&quot;the-xk1-handshake&quot;&gt;The XK1 Handshake&lt;/h3&gt;
 
 &lt;p&gt;Here, Alice knows how to initiate a communication with Bob and she knows his public static key: such discovery can be achieved, for example, through a publicly accessible register of users’ static keys, smart contracts, or through a previous public/private advertisement of Bob’s static key.&lt;/p&gt;
 
 &lt;p&gt;A Noise handshake pattern that suits this scenario is &lt;code class=&quot;highlighter-rouge&quot;&gt;XK1&lt;/code&gt;:&lt;/p&gt;
-
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; XK1:
     &amp;lt;-  s
        ...
@@ -206,23 +199,20 @@ employed during the handshake.&lt;/p&gt;
     &amp;lt;-  e, ee, es
     -&amp;gt;  s, se
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
 &lt;p&gt;Within this handshake, Alice and Bob reciprocally authenticate their static keys &lt;code class=&quot;highlighter-rouge&quot;&gt;s&lt;/code&gt; using ephemeral keys &lt;code class=&quot;highlighter-rouge&quot;&gt;e&lt;/code&gt;. We note that while Bob’s static key is assumed to be known to Alice (and hence is not transmitted), Alice’s static key is sent to Bob encrypted with a key derived from both parties ephemeral keys and Bob’s static key.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Security considerations on identity-hiding (active attacker)&lt;/strong&gt;: Alice’s static key is encrypted with forward secrecy to an authenticated party. An active attacker initiating the handshake can check candidates for Bob’s static key against recorded/accepted exchanged handshake messages.&lt;/p&gt;
 
-&lt;h3 id=&quot;the-xx-and-xxpsk0-handshakes&quot;&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;XX&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;XXpsk0&lt;/code&gt; Handshakes&lt;/h3&gt;
+&lt;h3 id=&quot;the-xx-and-xxpsk0-handshakes&quot;&gt;The XX and XXpsk0 Handshakes&lt;/h3&gt;
 
 &lt;p&gt;If Alice is not aware of any static key belonging to Bob (and neither Bob knows anything about Alice), she can execute an &lt;code class=&quot;highlighter-rouge&quot;&gt;XX&lt;/code&gt; handshake, where each party tran&lt;strong&gt;X&lt;/strong&gt;mits to the other its own static key.&lt;/p&gt;
 
 &lt;p&gt;The handshake goes as follows:&lt;/p&gt;
-
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; XX:
     -&amp;gt;  e
     &amp;lt;-  e, ee, s, es
     -&amp;gt;  s, se
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
 &lt;p&gt;We note that the main difference with &lt;code class=&quot;highlighter-rouge&quot;&gt;XK1&lt;/code&gt; is that in second step Bob sends to Alice his own static key encrypted with a key obtained from an ephemeral-ephemeral Diffie-Hellman exchange.&lt;/p&gt;
 
 &lt;p&gt;This handshake can be slightly changed in case both Alice and Bob pre-shares some secret &lt;code class=&quot;highlighter-rouge&quot;&gt;psk&lt;/code&gt; which can be used to strengthen their mutual authentication during the handshake execution. One of the resulting protocol, called &lt;code class=&quot;highlighter-rouge&quot;&gt;XXpsk0&lt;/code&gt;, goes as follow:&lt;/p&gt;
