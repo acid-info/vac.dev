@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@acid-info/docusaurus-og@^1.0.0-alpha.111":
+"@acid-info/docusaurus-og@1.0.0-alpha.111":
   version "1.0.0-alpha.111"
   resolved "https://registry.yarnpkg.com/@acid-info/docusaurus-og/-/docusaurus-og-1.0.0-alpha.111.tgz#0a5f96512f5ad1bf22d632009fe5902b184fb53c"
   integrity sha512-LrKfnxdG6P0/YtHP2ugz3QMhFCgavfnWLjpuvdlAUA1CWXBDVX33UGvKh4Zt7m5j3tLtpdlEt3Xa3IMgBUJAUg==
@@ -19,14 +19,14 @@
     satori "^0.10.1"
     sharp "^0.32.1"
 
-"@acid-info/logos-docusaurus-preset@^1.0.0-alpha.126":
-  version "1.0.0-alpha.126"
-  resolved "https://registry.yarnpkg.com/@acid-info/logos-docusaurus-preset/-/logos-docusaurus-preset-1.0.0-alpha.126.tgz#1c2e7ad6f4a83e44a200d05199f21a4e21c5d014"
-  integrity sha512-qa21bALUqQoqjZa7K0nGQFq5sGI2IQ9LPbxO4LAPTuoaDhf8I910QI7/w8VDzfdGU9voTpEIa17hV9mnKjyQIQ==
+"@acid-info/logos-docusaurus-preset@^1.0.0-topic-upgrade-lsd.17":
+  version "1.0.0-topic-upgrade-lsd.17"
+  resolved "https://registry.yarnpkg.com/@acid-info/logos-docusaurus-preset/-/logos-docusaurus-preset-1.0.0-topic-upgrade-lsd.17.tgz#9c144e0a8e985d826f99fdfaddff199a010baccc"
+  integrity sha512-dDhXxpb4Iv9bBgV+KqP1MpHxXOYjSIbL9mQ3VpwdUvsaOJ8hDER/E6JbnXOtdOG9zDiXhS8OL/NbxCnolsEcjA==
   dependencies:
-    "@acid-info/docusaurus-og" "^1.0.0-alpha.111"
-    "@acid-info/logos-docusaurus-search-local" "^1.0.0-alpha.111"
-    "@acid-info/logos-docusaurus-theme" "^1.0.0-alpha.126"
+    "@acid-info/docusaurus-og" "1.0.0-alpha.111"
+    "@acid-info/logos-docusaurus-search-local" "1.0.0-alpha.111"
+    "@acid-info/logos-docusaurus-theme" "1.0.0-topic-upgrade-lsd.17+7ebeeac"
     "@docusaurus/core" "^2.4.1"
     "@docusaurus/module-type-aliases" "^2.4.1"
     "@docusaurus/preset-classic" "^2.4.1"
@@ -40,7 +40,7 @@
     lodash "^4.17.21"
     node-fetch "2"
 
-"@acid-info/logos-docusaurus-search-local@^1.0.0-alpha.111":
+"@acid-info/logos-docusaurus-search-local@1.0.0-alpha.111":
   version "1.0.0-alpha.111"
   resolved "https://registry.yarnpkg.com/@acid-info/logos-docusaurus-search-local/-/logos-docusaurus-search-local-1.0.0-alpha.111.tgz#f4a19ad1fdee4da58b7793dde5294304475cff70"
   integrity sha512-W8ILeA095JgaBcze/zsh7GX5yH+oee7QG7kFqfiO7F5apai/0tGfLm1tq7oiJT+jR7guW1jxwuACIFxP7Jm8pw==
@@ -54,13 +54,13 @@
     "@easyops-cn/docusaurus-search-local" "^0.33.6"
     lodash "^4.17.21"
 
-"@acid-info/logos-docusaurus-theme@^1.0.0-alpha.126":
-  version "1.0.0-alpha.126"
-  resolved "https://registry.yarnpkg.com/@acid-info/logos-docusaurus-theme/-/logos-docusaurus-theme-1.0.0-alpha.126.tgz#dabce5b251916d943afe34294990995c28a4585a"
-  integrity sha512-CfjyNp//y4GUKsGFbCDwx4PFJb5kOyWn+kL995XghVaxEG5TWA2Q3Dq6+Vdmmky8mdHL/abD8UuolK9EQj7jdQ==
+"@acid-info/logos-docusaurus-theme@1.0.0-topic-upgrade-lsd.17+7ebeeac":
+  version "1.0.0-topic-upgrade-lsd.17"
+  resolved "https://registry.yarnpkg.com/@acid-info/logos-docusaurus-theme/-/logos-docusaurus-theme-1.0.0-topic-upgrade-lsd.17.tgz#ba354f70a58990831de26729cb5fee489ddf5305"
+  integrity sha512-aRvPgBKFOiJpjWlVlmkZ4DFw42o/UDqP9N4UgXx3/DtcguaKNBn8uAeWSkLBOy/a1cvF7ZppK8ePAmQZ3Xn7Ow==
   dependencies:
-    "@acid-info/docusaurus-og" "^1.0.0-alpha.111"
-    "@acid-info/lsd-react" "^0.1.0-alpha.21"
+    "@acid-info/docusaurus-og" "1.0.0-alpha.111"
+    "@acid-info/lsd-react" "^0.1.0-beta.1"
     "@docusaurus/core" "^2.4.1"
     "@docusaurus/mdx-loader" "^2.4.1"
     "@docusaurus/module-type-aliases" "^2.4.1"
@@ -101,10 +101,10 @@
     three-stdlib "^2.23.4"
     utility-types "^3.10.0"
 
-"@acid-info/lsd-react@^0.1.0-alpha.21":
-  version "0.1.0-alpha.21"
-  resolved "https://registry.yarnpkg.com/@acid-info/lsd-react/-/lsd-react-0.1.0-alpha.21.tgz#3a6a6862bc492521197ef354795f1b1fe9bceffe"
-  integrity sha512-zgec9ezT469HBB/rKFzqbgEFiH59Raf8BkWE4XWP4mS9qc2ZQwwYy59TjbJKN5kgwWVnVX/cY1Ryvj9uFcnO8g==
+"@acid-info/lsd-react@^0.1.0-beta.1":
+  version "0.1.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@acid-info/lsd-react/-/lsd-react-0.1.0-beta.1.tgz#a6d8dc04a3422a1a840d032fc1d1730f4cc34e29"
+  integrity sha512-YletiehVgoXmMhIH03u67Dxg8ZiFNrGhEsvN9/+jCTnOaBQxf0/JgS7kqBeZUlqK88prU6P/QzZruiWsxVFKgA==
   dependencies:
     "@datepicker-react/hooks" "^2.8.4"
     "@emotion/react" "^11.10.5"
